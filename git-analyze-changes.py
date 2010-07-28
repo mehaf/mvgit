@@ -32,7 +32,7 @@ import getopt
 import sys
 import os
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 # Global Constants

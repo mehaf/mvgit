@@ -19,7 +19,7 @@ for <limb1> or <limb2> if either is omitted.
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 config = {

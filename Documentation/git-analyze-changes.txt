@@ -55,6 +55,6 @@ Author
 ------
 Dale Farnsworth <dfarnsworth@mvista.com>
 
-GIT
----
-Part of the linkgit:git[7] suite
+MVGIT
+-----
+Part of the mvgit suite

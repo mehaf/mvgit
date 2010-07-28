@@ -17,7 +17,7 @@ for <limb2> if it is omitted.
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 config = {

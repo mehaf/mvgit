@@ -56,7 +56,7 @@ SCRIPTS = $(patsubst %.sh,%,$(SCRIPT_SH)) \
 ALL_PROGRAMS = $(PROGRAMS) $(SCRIPTS)
 
 # not built by 'all, but 'install' will install in bindir
-OTHER_INSTALL = gitlib.py
+OTHER_INSTALL = mvgitlib.py
 
 # Set paths to tools early so that they can be used for version tests.
 ifndef SHELL_PATH

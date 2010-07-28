@@ -17,7 +17,7 @@ limb.  If only :<remote_limb> is supplied, then first run "git fetch
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 config = {

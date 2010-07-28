@@ -17,7 +17,7 @@ limb, git-merge-limb runs git merge [opts] <remote>/branch_name
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 config = {

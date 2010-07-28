@@ -18,7 +18,7 @@ limb, git-rebase-limb runs git rebase [opts] <upstream>/branch_name
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 config = {
     "debug"		: False,

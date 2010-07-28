@@ -30,7 +30,7 @@ commits that are in either limb, but not in the other limb.
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 config = {

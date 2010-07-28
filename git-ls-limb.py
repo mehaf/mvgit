@@ -14,7 +14,7 @@ contained directly within the limb are listed.
 import sys
 import getopt
 import re
-import gitlib as git
+import mvgitlib as git
 
 
 config = {
