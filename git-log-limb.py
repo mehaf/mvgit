@@ -118,9 +118,10 @@ def log_limbs():
 	    options.append("--max-count=1")
 
 	been_here = False
-	for branch in git.branches(limb1name):
+	limb1 = git.branchnames(limb1name)
+	for branchname in git.branchnames(limb1name):
 	    cmd = ['git', '--no-pager', 'log'] + options
-	    cmd.append(branch)
+	    cmd.append(branchname)
 	    cmd += paths
 
 	    if been_here:
