@@ -1,5 +1,5 @@
 git-push-mv(1)
-================
+==============
 
 NAME
 ----
@@ -8,12 +8,12 @@ git-push-mv - Push a branch to MontaVista git kernel repository
 SYNOPSIS
 --------
 [verse]
-'git-push-mv' [--branch <branch>] [--bugz <bugno>|--dev]
-	      [--merge <email>] [--review <email>] <repo>
+'git push-mv' [--branch <branch>] [--bugz <bugno>|--dev]
+	    [--merge <email>] [--review <email>] <repo>
 
 DESCRIPTION
 -----------
-`git-push-mv` is an extension on top of the standard `git-push` command
+'git push-mv' is an extension on top of the standard 'git push' command
 that is aware of MontaVista's git repository layout and naming scheme.
 
 
@@ -21,11 +21,11 @@ OPTIONS
 -------
 --branch <branch>::
 	Push the local branch specified in the command option. If this option
-	is missing, "git-push-mv" will push the current HEAD.
+	is missing, 'git push-mv' will push the current HEAD.
 
 --bugz <bugno>::
 	Push the requested branch into the repository's "bugfixes"
-	namespace. git-commit-mv will automatically determine the appropriate
+	namespace. 'git commit-mv' will automatically determine the appropriate
 	version number to use in the branch name. See GitBugFixing in the
 	MontaVista Wiki for details on branch naming.
 
@@ -51,7 +51,7 @@ EXAMPLE
 To push an update to bug number 12345 in the f2.6.24 kernel, one would
 run:
 
-git-push-mv --bugz 12345 f2.6.24
+git push-mv --bugz 12345 f2.6.24
 
 
 SEE ALSO

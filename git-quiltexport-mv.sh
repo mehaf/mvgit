@@ -54,7 +54,7 @@ rev="$1"
 # Validate that the rev given in the commaind line is an actual
 # revision in the tree.
 #
-git-rev-parse --verify $rev > /dev/null 2>&1
+git rev-parse --verify $rev > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
 	exit 1
@@ -66,8 +66,8 @@ fi
 # we are not guaranteed a clean set of patches that will apply on
 # top of each other.
 #
-revcount=`git-rev-list --no-merges $rev.. | wc -l`
-merge_revcount=`git-rev-list $rev.. | wc -l`
+revcount=`git rev-list --no-merges $rev.. | wc -l`
+merge_revcount=`git rev-list $rev.. | wc -l`
 
 if [ $revcount -ne $merge_revcount ]
 then
@@ -91,7 +91,7 @@ then
 	die "$outputdir is not writeable"
 fi
 
-git-format-patch --start-number $startnum $rev > $outputdir/${seriesfile}_tmp.$$
+git format-patch --start-number $startnum $rev > $outputdir/${seriesfile}_tmp.$$
 
 #
 # Cleanup patch names

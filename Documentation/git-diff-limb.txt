@@ -9,7 +9,17 @@ that of the correspondingly named branch in another limb.
 
 SYNOPSIS
 --------
-git-diff-limb [opts] [<limb1>]..[<limb2>] [--] [<path>...]
+[verse]
+'git diff-limb' [opts] [<limb1>]..[<limb2>] [--] [<path>...]
+
+DESCRIPTION
+-----------
+
+Each branch in <limb1> is compared to the correspondingly named branch
+in <limb2>.  'git diff-limb' runs "'git diff' [opts]
+<limb1>/branch_name..<limb2>/branch_name [--] [<path>...]" for each
+branch in <limb1> and <limb2>.  The name of the current limb is
+substituted for <limb1> or <limb2> if either is omitted.
 
 These options are passed directly to "git diff":
 
@@ -17,17 +27,6 @@ These options are passed directly to "git diff":
 --name-status, --color, --no-color, --color-words, --no-renames,
 --check, --full-index, --binary, -B, -M, -C, --find-copies-harder, -R,
 -b, -w, --ext-diff, --no-ext-diff
-
-
-
-DESCRIPTION
------------
-
-Each branch in <limb1> is compared to the correspondingly named branch
-in <limb2>.  git-diff-limb runs "git diff [opts]
-<limb1>/branch_name..<limb2>/branch_name [--] [<path>...]" for each
-branch in <limb1> and <limb2>.  The name of the current limb is
-substituted for <limb1> or <limb2> if either is omitted.
 
 Author
 ------

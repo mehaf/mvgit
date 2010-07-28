@@ -4,19 +4,15 @@ git-signoff-limb(1)
 NAME
 ----
 
-git-signoff-limb - Run git-signoff-mv on each branch in a limb.  The
+git-signoff-limb - Run "git signoff-mv" on each branch in a limb.  The
 range of commits to signoff is determined by comparing the commits in
 the branch to the commits in the correspondingly named branch in
 another limb.
 
 SYNOPSIS
 --------
-'git-signoff-limb' [options] <limb1>..[<limb2>]
-
-These [options] are passed directly to "git signoff-mv":
-
---ack, --name=<name>, --email=<email>, -f, --force
-
+[verse]
+'git signoff-limb' [options] <limb1>..[<limb2>]
 
 DESCRIPTION
 -----------
@@ -29,6 +25,10 @@ git signoff-mv [options] <limb1>/branch_name..
 This will add signoff/ack lines to all commits that are in <limb2>
 that are not in <limb1>. The name of the current limb is substituted
 for <limb2> if it is omitted.
+
+These [options] are passed directly to "mvgit signoff":
+
+--ack, --name=<name>, --email=<email>, -f, --force
 
 Author
 ------

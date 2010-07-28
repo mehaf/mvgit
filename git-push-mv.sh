@@ -38,7 +38,7 @@
 # To push an update to bug number 12345 in the f2.6.24 kernel, one would
 # run:
 #
-# git-push-mv --bugz 12345 f2.6.24
+# git push-mv --bugz 12345 f2.6.24
 
 #-----------------------------------------------------------------------------
 ERROR () {
@@ -139,24 +139,24 @@ if [ -z "$LOCAL_HEAD" ] ; then
     LOCAL_HEAD="HEAD"
 fi
 
-if ! SHA1_HEAD=`git-rev-parse "$LOCAL_HEAD"` ; then
-    ERROR "couldn't git-rev-parse $LOCAL_HEAD"
+if ! SHA1_HEAD=`git rev-parse "$LOCAL_HEAD"` ; then
+    ERROR "couldn't git rev-parse $LOCAL_HEAD"
     ERROR "this probably means it isn't a branch"
     exit 2
 fi
 
 # check repo before we start querying it
-if ! git-remote show "$REPO" > /dev/null ; then
-    ERROR "git-remote doesn't think $REPO is a remote repository name"
+if ! git remote show "$REPO" > /dev/null ; then
+    ERROR "git remote doesn't think $REPO is a remote repository name"
     ERROR "(or your network is down)"
     ERROR "the available remote repositories are: "
-    git-remote | sed "s/^/    /" >&2
+    git remote | sed "s/^/    /" >&2
     exit 2
 fi
 
 if [ -n "$BUGNO" ] ; then
     PREFIX="refs/heads/bugfixes/${BUGNO}_v"
-    refname=`git-ls-remote -h "$REPO" | cut -f 2 | grep "$PREFIX" | sort | tail -1`
+    refname=`git ls-remote -h "$REPO" | cut -f 2 | grep "$PREFIX" | sort | tail -1`
     format='(^(refs/heads/)(bugfixes/)([0-9]+)(_v)([0-9][0-9])$)'
     new_version='$2,$3,$4,sprintf ("%2.2d", 1)'
     increment_version='$2,$3,$4,sprintf ("%2.2d", $5+1)'
@@ -180,16 +180,16 @@ fi
 
 if [ -n "$REVIEW_REQUEST" ] ; then
     TAGNAME="$REMOTE_HEAD/Request_Review/$SHA1_HEAD"
-    TRACE git-tag -a -m "$REVIEW_REQUEST" "$TAGNAME" "$SHA1_HEAD"
-    TRACE git-push "$REPO" "$TAGNAME"
-    TRACE git-tag -d "$TAGNAME"
+    TRACE git tag -a -m "$REVIEW_REQUEST" "$TAGNAME" "$SHA1_HEAD"
+    TRACE git push "$REPO" "$TAGNAME"
+    TRACE git tag -d "$TAGNAME"
 fi
 
 if [ -n "$MERGE_REQUEST" ] ; then
     TAGNAME="$REMOTE_HEAD/Request_Merge/$SHA1_HEAD"
-    TRACE git-tag -a -m "$MERGE_REQUEST" "$TAGNAME" "$SHA1_HEAD"
-    TRACE git-push "$REPO" "$TAGNAME"
-    TRACE git-tag -d "$TAGNAME"
+    TRACE git tag -a -m "$MERGE_REQUEST" "$TAGNAME" "$SHA1_HEAD"
+    TRACE git push "$REPO" "$TAGNAME"
+    TRACE git tag -d "$TAGNAME"
 fi
 
-TRACE git-push "$REPO" "$LOCAL_HEAD":refs/heads/"$REMOTE_HEAD"
+TRACE git push "$REPO" "$LOCAL_HEAD":refs/heads/"$REMOTE_HEAD"

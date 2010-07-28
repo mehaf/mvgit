@@ -8,9 +8,10 @@ git-provenance - list the branches from which commits were cherry-picked
 
 SYNOPSIS
 --------
-'git-provenance' [-a] [-t[t]] [-v] [[-u <branchname>]...]
-		[[-i <istr>]...] [[-x <xstr>]...]
-		[<branch> [[<commitID>|<changeID>]...]]
+[verse]
+'git provenance' [-a] [-t[t]] [-v] [[-u <branchname>]...]
+	       [[-i <istr>]...] [[-x <xstr>]...]
+	       [<branch> [[<commitID>|<changeID>]...]]
 
 DESCRIPTION
 -----------

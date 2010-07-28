@@ -1,4 +1,3 @@
-
 git-signoff-mv(1)
 =================
 
@@ -9,25 +8,25 @@ git-signoff-mv - Add a sign-off or acked line to a set of commits
 SYNOPSIS
 --------
 [verse]
-'git-signoff-mv' [--ack] [--nack] [--name <name>] [--email <email>]
-               [--bugz <bug_number>] [--disposition <disposition>] [-f|--force]
-               [--source <source>] [--type <type>] <rev-list>
+'git signoff-mv' [--ack] [--nack] [--name <name>] [--email <email>]
+               [--bugz <bug_number>] [--disposition <disposition>]
+	       [-f|--force] [--source <source>] [--type <type>] <rev-list>
 
 DESCRIPTION
 -----------
-'git-signoff-mv' provides a method for a developer to add a line that 
+'git signoff-mv' provides a method for a developer to add a line that 
 reads "Signed-off-by: Name <Email>" to a set of commits in the current 
 branch.
 
 By default, the name and email are picked up from the command line
-options below, but if they are not set, 'git-signoff-mv' looks at the
+options below, but if they are not set, 'git signoff-mv' looks at the
 GIT_COMMITTER_NAME and GIT_COMMITTER_EMAIL environment variables and
 if those are not set, it will read the the user.name and user.email
-variables in 'git-config'.
+variables in 'git config'.
 
 Note that doing this will rewrite the commits such that they have new
-commit IDs as git-commit IDs are based on the both the commit contents
-and the commit message. This means that once 'git-signoff-mv' is
+commit IDs as git commit IDs are based on the both the commit contents
+and the commit message. This means that once 'git signoff-mv' is
 completed, the branch will no longer be a 1:1 match with the original
 branch.
 
@@ -48,7 +47,7 @@ OPTIONS
 
 --bugz <bug_number>::
 	Add a second bug number to the MR: line of the subheader.  Use when
-	git-bulk-cherry-mv didn't do the right thing.
+	'git bulk-cherry' didn't do the right thing.
 
 --disposition <disposition>::
 	Value of Disposition: line to be added to the commit message subheader.
@@ -60,10 +59,10 @@ OPTIONS
 	Value of Type: line to be added to the commit message subheader.
 
 -f | --force::
-	git-signoff-mv uses git-filter-branch internally.  Sometimes
-	git-filter-branch refuses to overwrite the new branch without
-	the -f or --force option.  git-signoff-mv passes the -f or --force
-	option directly to git-filter-branch.
+	'git signoff-mv' uses 'git filter-branch' internally.  Sometimes
+	'git filter-branch' refuses to overwrite the new branch without
+	the -f or --force option.  'git signoff-mv' passes the -f or --force
+	option directly to 'git filter-branch'.
 
 <rev-list>::
 	List of revisions to sign-off.
@@ -73,14 +72,14 @@ EXAMPLE
 -------
 
 ------------
-$ git-checkout -b 27290_v01 f2.6.24/bugfixes/27290_v01 (1)
-$ git-signoff-mv --ack f2.6.24/dev.. (2)
+$ git checkout -b 27290_v01 f2.6.24/bugfixes/27290_v01 (1)
+$ git signoff-mv --ack f2.6.24/dev.. (2)
 ------------
 
 1. Checkoout out a local tracking branch for the remote bugfixes/27290_v01 
    based on the f2.6.24 remote repository.
 
-2. Tell 'git-signoff-mv' to add an "Acked-by:" line to each commit that
+2. Tell 'git signoff-mv' to add an "Acked-by:" line to each commit that
    is in the bugfix branch but not in the f2.6.24/dev branch.
 
 Author

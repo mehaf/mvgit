@@ -9,9 +9,9 @@ through a limb.
 
 SYNOPSIS
 --------
-'git-changes' [-v] -l [<limb>]
-
-'git-changes' [-v] [<left> [<right>]]
+[verse]
+'git changes' [-v] -l [<limb>]
+'git changes' [-v] [<left> [<right>]]
 
 DESCRIPTION
 -----------
@@ -23,7 +23,7 @@ propagated to a particular branch, or it can list all of the commit
 IDs of changes that should be propagated from one specified branch to
 another.
 
-'git-changes' [-v] -l [<limb>]::
+'git changes' [-v] -l [<limb>]::
 
     The limb specified by <limb> (if omitted, the current limb) is
     examined.  Each of the limb's branches that has pending changes
@@ -31,7 +31,7 @@ another.
     each branch on which it depends.  If -v is NOT specified, then each
     status appears only once.
 
-'git-changes' [-v] [<left-branch> [<right-branch>]]::
+'git changes' [-v] [<left-branch> [<right-branch>]]::
 
     If <left-branch> is not specified, the name of the current branch is
     listed, followed by the status of each branch on which it depends.

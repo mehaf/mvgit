@@ -3,8 +3,8 @@
 '''
 This program analyzes the changes between two limbs.
 
-Usage: analyze-limb [options] <limb1>..<limb2>
-       analyze-limb [options] [<limb1>]
+Usage: git analyze-limb [options] <limb1>..<limb2>
+       git analyze-limb [options] [<limb1>]
     options:
 	-r <remote>	specifies the remote alias, default "origin".
 	-v		display commit descriptions for each commit

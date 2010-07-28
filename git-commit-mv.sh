@@ -42,7 +42,7 @@ preserve_author=false
 email=$GIT_COMMITTER_EMAIL
 if [ -z "$email" ]
 then
-	email=`git-config --get user.email`
+	email=`git config --get user.email`
 fi
 if [ -z "$email" ]
 then
@@ -53,7 +53,7 @@ fi
 name=$GIT_COMMITTER_NAME
 if [ -z "$name" ]
 then
-	name=`git-config --get user.name`
+	name=`git config --get user.name`
 fi
 if [ -z "$name" ]
 then
@@ -109,14 +109,14 @@ do
 		orig_commit="$2"
 		shift
 
-		git-rev-parse --verify $orig_commit > /dev/null 2>&1
+		git rev-parse --verify $orig_commit > /dev/null 2>&1
 		if [[ $? -ne 0 ]]
 		then
 			die "Error: $orig_commit is not a valid revision"
 		fi
 
-		oneline=`git-log -n1 --pretty=format:%s $orig_commit`
-		git-log -n1 --pretty=format:%b $orig_commit > /tmp/commit-body.$$
+		oneline=`git log -n1 --pretty=format:%s $orig_commit`
+		git log -n1 --pretty=format:%b $orig_commit > /tmp/commit-body.$$
 		bodyfile="/tmp/commit-body.$$"
 		rmbodyfile=true
 		;;
@@ -278,7 +278,7 @@ then
 	export GIT_AUTHOR_DATE="$(git log -1 --pretty=format:%ai $orig_commit)"
 fi
 
-git-commit $commit_opt /tmp/git-commit-mv-msg.$$ $@
+git commit $commit_opt /tmp/git-commit-mv-msg.$$ $@
 
 rm /tmp/git-commit-mv-msg.$$
 [ -n "$rmbodyfile" ] && rm $bodyfile

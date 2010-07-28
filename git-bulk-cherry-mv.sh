@@ -40,7 +40,7 @@ is_merge_commit() {
 }
 
 do_cherry_pick() {
-	echo Picking `git-log --pretty=oneline -n1 $1`
+	echo Picking `git log --pretty=oneline -n1 $1`
 	if is_merge_commit $1; then
 		# We now cherry-pick a merge commit ("-m 1" option) by
 		# applying its associated patch (relative to first parent).
@@ -49,7 +49,7 @@ do_cherry_pick() {
 	else
 		merge_opt=
 	fi
-	git-cherry-pick $merge_opt -n $1 2> /tmp/bulk-cherry-mv-err.$$
+	git cherry-pick $merge_opt -n $1 2> /tmp/bulk-cherry-mv-err.$$
 	rv=$?
 	if grep -q "After resolving the conflicts" /tmp/bulk-cherry-mv-err.$$
 	then
@@ -107,8 +107,8 @@ has_MV_header() {
 # TODO: Handle conflict resolution case
 #
 do_commit_mv() {
-#	local oneline="`git-log -n1 --pretty=format:%s $revision`"
-#	git-log -n1 --pretty=format:%b $revision >> $dotest/commit-msg-body.$$
+#	local oneline="`git log -n1 --pretty=format:%s $revision`"
+#	git log -n1 --pretty=format:%b $revision >> $dotest/commit-msg-body.$$
 #	echo >> $dotest/commit-msg-body.$$
 #	echo "(Cherry-picked from commit $revision)" >> $dotest/commit-msg-body.$$
 
@@ -120,7 +120,7 @@ do_commit_mv() {
 	#    See http://ubuntuforums.org/showpost.php?s=e3faa04fdc192707fe0064b043ca570c&p=4187899&postcount=2
 	#
 	echo $mv_commit_cmd --changeid $(git rev-list --no-walk $revision) $c_opt $revision -a > /tmp/bulk-cherry-mv-args.$$
-	xargs -a /tmp/bulk-cherry-mv-args.$$ git-commit-mv
+	xargs -a /tmp/bulk-cherry-mv-args.$$ git commit-mv
 	rm /tmp/bulk-cherry-mv-args.$$
 }
 
@@ -181,7 +181,7 @@ do
 			echo "--continue is not the last argument"
 			exit 1
 		fi
-		git-diff-files --quiet || {
+		git diff-files --quiet || {
 			echo "You must edit all merge conflicts and then mark them as resolved"
 			echo "using 'git add <paths>' or 'git rm <paths>'."
 			exit 1
@@ -191,7 +191,7 @@ do
 			do_load_variables
 			rm $GIT_DIR/MERGE_MSG
 			revision=`head -$counter $dotest/rev-list | tail -1`
-			echo Continuing at `git-log --pretty=oneline -n1 $revision`
+			echo Continuing at `git log --pretty=oneline -n1 $revision`
 			do_commit_mv
 			counter=$(($counter + 1))
 			do_main_loop
@@ -212,7 +212,7 @@ do
 			do_load_variables
 			rm $GIT_DIR/MERGE_MSG
 			revision=`head -$counter $dotest/rev-list | tail -1`
-			echo Skipping `git-log --pretty=oneline -n1 $revision`
+			echo Skipping `git log --pretty=oneline -n1 $revision`
 			counter=$(($counter + 1))
 			do_main_loop
 			do_return_to_branch

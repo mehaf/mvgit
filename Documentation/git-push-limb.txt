@@ -8,18 +8,15 @@ git-push-limb - Push limb to remote repository.
 
 SYNOPSIS
 --------
-'git-push-limb' [options] [<remote_repo> [<local_limb>][:<remote_limb>]]
-
-These [options] are passed directly to "git push":
-
---dry-run, --tags, -f, --force, --thin, --no-thin
+[verse]
+'git push-limb' [options] [<remote_repo> [<local_limb>][:<remote_limb>]]
 
 DESCRIPTION
 -----------
 
 Push each branch in <local-limb> into <remote_limb> on
 <remote_repo>.  If <remote_repo> is omitted, origin is used.
-For each branch <branch> in <local_limb>, git-push-limb runs
+For each branch <branch> in <local_limb>, 'git push-limb' runs
 -------------------------------------
 git push <remote_repo> <local_limb>/<branch>:<remote_limb>/<branch>
 -------------------------------------
@@ -27,6 +24,10 @@ If neither <local_limb> and <remote_limb> are supplied, push the current
 limb.  If only <remote_limb> is supplied, then first run "git fetch
 <remote_repository>" to update remote references, and then delete
 <remote_limb> from <remote_repository>.
+
+These [options] are passed directly to 'git push':
+
+--dry-run, --tags, -f, --force, --thin, --no-thin
 
 Author
 ------

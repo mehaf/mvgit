@@ -1,4 +1,3 @@
-
 git-quiltexport-mv(1)
 =====================
 
@@ -8,9 +7,10 @@ git-quiltexport-mv - Export a set of patches for quilt.
 
 SYNOPSIS
 --------
-'git-quiltexport-mv' [--outputdir <directory>] [--seriesfile <file>]
-		     [--patchprefix <file>] [--append] [--startnumber <number>]
-		     <rev>
+[verse]
+'git quiltexport-mv' [--outputdir <directory>] [--seriesfile <file>]
+		   [--patchprefix <file>] [--append] [--startnumber <number>]
+		   <rev>
 
 DESCRIPTION
 -----------
@@ -20,7 +20,7 @@ This command is deprecated.  Speak up if you have a use for it.
 Export a set of patches for quilt. Allows for
 adding a prefix to the patch files, appending an existing series file,
 etc. I will be using this to autogenerate the series file for the f2.6.24
-builds out of CVS. Run "git-quiltexport-mv --help" for options.
+builds out of CVS. Run "git quiltexport-mv --help" for options.
 
 
 OPTIONS

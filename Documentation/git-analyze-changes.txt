@@ -8,8 +8,9 @@ git-analyze-changes - Analyze the changes between two limbs
 
 SYNOPSIS
 --------
-'git-analyze-changes' [-r <remote>] [[-u <branchname>]...]
-		[-v] [-p] [-h] [[<limb1>..]<limb2>]
+[verse]
+'git analyze-changes' [-r <remote>] [[-u <branchname>]...]
+		    [-v] [-p] [-h] [[<limb1>..]<limb2>]
 
 DESCRIPTION
 -----------

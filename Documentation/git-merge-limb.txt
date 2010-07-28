@@ -8,24 +8,25 @@ git-merge-limb - Merge current limb with remote limb.
 
 SYNOPSIS
 --------
-'git-merge-limb' [options] <remote> [<limb>]
-
-These [options] are passed directly to "git merge":
---stat, --no-stat, --log, --no-log, -s, --strategy=
+[verse]
+'git merge-limb' [options] <remote> [<limb>]
 
 DESCRIPTION
 -----------
 
-If <limb> is specified, git-merge-limb will perform an automatic checkout
+If <limb> is specified, 'git merge-limb' will perform an automatic checkout
 of the common branch in <limb> before doing anything else. Otherwise,
 it remains on the current branch.
 
 Then, each branch in the current limb merges from the correspondingly named
 branch in <remote>.  For each branch, branch_name, in the current
-limb, git-merge-limb runs
+limb, 'git merge-limb' runs
 -------------------------------------
 git merge [opts] <remote>/branch_name <current_limb>/branch_name.
 -------------------------------------
+
+These [options] are passed directly to "git merge":
+--stat, --no-stat, --log, --no-log, -s, --strategy=
 
 Author
 ------

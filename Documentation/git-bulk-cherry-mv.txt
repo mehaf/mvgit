@@ -8,7 +8,8 @@ git-bulk-cherry-mv - Cherry pick a range of commits into the working branch,
 
 SYNOPSIS
 --------
-'git-bulk-cherry-mv' [-x] [--bugz <bugno>] [--source <source>]
+[verse]
+'git bulk-cherry-mv' [-x] [--bugz <bugno>] [--source <source>]
 		   [-e | --edit]
 		   [--disposition <disposition>] [--type <type>] [--]
 		   [rev1...rev2]
@@ -16,10 +17,10 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-Given a range of commits, this tool runs git-cherry-pick on each commit and
-then creates a new commit using `git-commit-mv` to apply a MontaVista header.
+Given a range of commits, this tool runs 'git cherry-pick' on each commit and
+then creates a new commit using `git commit-mv` to apply a MontaVista header.
 
-Like `git-cherry-pick`, this command requires your working tree to be clean (no
+Like 'git cherry-pick', this command requires your working tree to be clean (no
 modifications from the HEAD commit).
 
 To cherry-pick commits without an MV header, it is necessary to
@@ -28,9 +29,8 @@ specify either the --edit option or all of the following options:
 
 OPTIONS
 -------
-The following three options control resuming or aborting a
-git-bulk-cherry-mv that has stopped in the middle due to need for programmer
-intervention.
+The following three options control resuming or aborting a 'git bulk-cherry-mv'
+that has stopped in the middle due to need for programmer intervention.
 
 --continue::
 	Attempt to cherry-pick the current revision.
@@ -39,7 +39,7 @@ intervention.
 	Skip the current revision being cherry-picked.
 
 --abort::
-	Abort the whole git-bulk-cherry-mv process, and go back to where you
+	Abort the whole 'git bulk-cherry-mv' process, and go back to where you
 	started.
 
 
@@ -47,7 +47,7 @@ intervention.
 	Permit merges in the revision list.
 
 --no-signoff::
-	Pass the --no-signoff option to git-commit-mv.
+	Pass the --no-signoff option to 'git commit-mv'.
 
 -x::
 	Add a string in the format "(Cherry picked from <commit>") to the
@@ -84,7 +84,7 @@ intervention.
 DISCUSSION
 ----------
 
-If all four MontaVista header options are specified, `git-bulk-cherry-mv`
+If all four MontaVista header options are specified, 'git bulk-cherry-mv'
 will automagically generate the commit headers for all messages and
 run w/o human intervention. If all four header options are not specified,
 you will need to edit each commit message manually.
@@ -96,7 +96,7 @@ The following example cherry-picks all the changes between kernels
 v2.6.24.2 and v2.6.24.3 into the current working tree:
 
 ------------
-$ git-bulk-cherry-mv --bugz 27076 --disposition Backport --source  "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-2.6.24.y.git" --type Integration v2.6.24.2..v2.6.24.3^1
+$ git bulk-cherry-mv --bugz 27076 --disposition Backport --source  "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-2.6.24.y.git" --type Integration v2.6.24.2..v2.6.24.3^1
 Cherry picking revision 9884948ab9d3ff59a1d77fd24c2d93af7686225f
 Created commit 9279a40: SPARC/SPARC64: Fix usage of .section .sched.text in
 assembler code.

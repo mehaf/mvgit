@@ -121,7 +121,7 @@ def signoff_limb():
 
 	cmd = ['git', 'signoff-mv'] + options + ['%s..' % limb1_branchname]
 
-	# ignore the error return from git-signoff-mv, until it's fixed
+	# ignore the error return from git signoff-mv, until it's fixed
 	git.call(cmd, error=None, stdout=sys.stdout, stderr=sys.stderr,
 		 verbose=True)
 

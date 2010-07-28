@@ -9,19 +9,11 @@ of the correspondingly named branch in another limb.
 
 SYNOPSIS
 --------
-'git-log-limb' [opts] [<limb1>][..|...][<limb2>]] [--] [<path>...]
-
-These options are passed directly to "git log":
-
--p, -u, --unified=<n>, --stat, --shortstat, --summary, --name-only,
---name-status, --color, --no-color, --color-words, --no-renames,
---check, --full-index, --binary, -B, -M, -C, --find-copies-harder, -b,
--w, --ext-diff, --no-ext-diff, --pretty=<format>, --no-merges,
---left-right
+[verse]
+'git log-limb' [opts] [<limb1>][..|...][<limb2>]] [--] [<path>...]
 
 DESCRIPTION
 -----------
-
 If no separator (ie, ".." or "...") is specified, the command
 --------------------------
 git log [opts] <limb1>/branch_name [--] [<patch>...]
@@ -33,12 +25,20 @@ for each branch.
 
 Otherwise, if a separator (ie, ".." or "...") is specified, each
 branch in <limb1> is compared to the correspondingly named branch in
-<limb2>.  git-log-limb runs
+<limb2>.  'git log-limb' runs
 --------------------------
 git log [opts] <limb1>/branch_name..<limb2>/branch_name [--] [<path>...]
 --------------------------
 for each branch in <limb1> and <limb2>.  The name of the current limb
 is substituted for <limb1> or <limb2> if either is omitted.
+
+These options are passed directly to "git log":
+
+-p, -u, --unified=<n>, --stat, --shortstat, --summary, --name-only,
+--name-status, --color, --no-color, --color-words, --no-renames,
+--check, --full-index, --binary, -B, -M, -C, --find-copies-harder, -b,
+-w, --ext-diff, --no-ext-diff, --pretty=<format>, --no-merges,
+--left-right, --max-count=<count>
 
 Note that "..." may also be used as a separator instead of ".." to
 commits that are in either limb, but not in the other limb.

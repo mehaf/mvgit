@@ -9,25 +9,21 @@ correspondingly named branch in another limb.
 
 SYNOPSIS
 --------
-'git-rebase-limb' [options] <upstream> [<limb>]
-
-These [options] are passed directly to "git rebase":
-
---verbose, --whitespace=<nowarn|warn|error|error-all|strip>, --preserve-merges
-
+[verse]
+'git rebase-limb' [options] <upstream> [<limb>]
 
 DESCRIPTION
 -----------
 
-If <limb> is specified, git-rebase-limb will perform an automatic checkout
+If <limb> is specified, 'git rebase-limb' will perform an automatic checkout
 of the common branch in <limb> before doing anything else. Otherwise,
 it remains on the current branch.
 
 Each branch in the current limb is rebased on the correspondingly named
 branch in <upstream>. For each branch <branch> in the current
-limb, git-rebase-limb runs 
+limb, 'git rebase-limb' runs 
 -------------------------------------
-git rebase-limb [options] <upstream>/<branch> <current_limb>/<branch>
+mvgit rebase-limb [options] <upstream>/<branch> <current_limb>/<branch>
 -------------------------------------
 In the case of conflicts, use your favorite editor to deal with the
 conflict, and then
@@ -35,8 +31,12 @@ conflict, and then
 git rebase --continue | --skip | --abort
 -------------------------------------
 to register your resolution of rebasing that particular branch until
-the individual git-rebase is completed, then repeat the original
-git-rebase-limb until there are no conflicts.
+the individual "git rebase" is completed, then repeat the original
+'git rebase-limb' until there are no conflicts.
+
+These [options] are passed directly to "git rebase":
+
+--verbose, --whitespace=<nowarn|warn|error|error-all|strip>, --preserve-merges
 
 Author
 ------

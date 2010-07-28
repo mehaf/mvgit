@@ -8,13 +8,14 @@ git-commit-mv - git-commit with MontaVista extensions
 SYNOPSIS
 --------
 [verse]
-'git-commit-mv' [-c <commit> [-x]] [--bugz <bugno>] [--type <string>]
-	      [--disposition <string>] [--source <string>] [--oneline <string>]
+'git commit-mv' [-c <commit> [-x]] [--bugz <bugno>] [--type <string>]
+	      [--disposition <string>] [--source <string>]
+	      [--oneline <string>]
 	      [--bodyfile <file>] [--no-edit] [git-commit options]
 
 DESCRIPTION
 -----------
-`git-commit-mv` is an extension on top of the standard `git-commit` command
+'git commit-mv' is an extension on top of the standard 'git commit' command
 that is aware of the MontaVista commit header format.
 
 A commit generated with this command has the following format:
@@ -81,15 +82,15 @@ OPTIONS
 
 --changeid <hash>::
 	Don't use this option.  Let it be computed for you.  It's
-	behind-the-scenes plumbing for the git-bulk-cherry-mv command.
+	behind-the-scenes plumbing for the 'git bulk-cherry-mv' command.
 
 DISCUSSION
 ----------
 
 Any other options specified on the command line are passed directly to
-`git-commit`, such that one can do `git-commit-mv [mv-options] -a` to commit
-all local changes. Note that not all `git-commit` options are compatible
-with `git-commit-mv`.
+'git commit', such that one can do 'git commit-mv' [mv-options] -a' to commit
+all local changes. Note that not all 'git commit' options are compatible
+with 'git commit-mv'.
 
 
 Note that no validation is done on the MontaVista-specific sub-header
