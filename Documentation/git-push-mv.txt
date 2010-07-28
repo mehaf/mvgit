@@ -1,0 +1,68 @@
+git-push-mv(1)
+================
+
+NAME
+----
+git-push-mv - Push a branch to MontaVista git kernel repository
+
+SYNOPSIS
+--------
+[verse]
+'git-push-mv' [--branch <branch>] [--bugz <bugno>|--dev]
+	      [--merge <email>] [--review <email>] <repo>
+
+DESCRIPTION
+-----------
+`git-push-mv` is an extension on top of the standard `git-push` command
+that is aware of MontaVista's git repository layout and naming scheme.
+
+
+OPTIONS
+-------
+--branch <branch>::
+	Push the local branch specified in the command option. If this option
+	is missing, "git-push-mv" will push the current HEAD.
+
+--bugz <bugno>::
+	Push the requested branch into the repository's "bugfixes"
+	namespace. git-commit-mv will automatically determine the appropriate
+	version number to use in the branch name. See GitBugFixing in the
+	MontaVista Wiki for details on branch naming.
+
+--dev::
+	Push the requested branch into the repository's "dev" namespace.  This
+	is the default behavior unless "--bugz" is specified. The push must be
+	a fast-forward push or it will fail.
+
+--merge <email_address>::
+	Request a merge of the bugfix branch. This option must be used in
+	conjunction with the "--bugz" option.
+
+--review <email_address>::
+	Request a merge of the bugfix branch. This option must be used in
+	conjunction with the "--bugz" option.
+
+<repo>::
+	The name of the kernel repository to push to.
+
+EXAMPLE
+-------
+
+To push an update to bug number 12345 in the f2.6.24 kernel, one would
+run:
+
+git-push-mv --bugz 12345 f2.6.24
+
+
+SEE ALSO
+--------
+linkgit:git-push[1]
+
+Author
+------
+Written by Perry Wagle <pwagle@mvista.com>
+
+
+GIT
+---
+Part of the linkgit:git[7] suite

@@ -1,0 +1,54 @@
+git-log-limb(1)
+===============
+
+NAME
+----
+
+git-log-limb - Compares the commits of each branch in a limb to that
+of the correspondingly named branch in another limb.
+
+SYNOPSIS
+--------
+'git-log-limb' [opts] [<limb1>][..|...][<limb2>]] [--] [<path>...]
+
+These options are passed directly to "git log":
+
+-p, -u, --unified=<n>, --stat, --shortstat, --summary, --name-only,
+--name-status, --color, --no-color, --color-words, --no-renames,
+--check, --full-index, --binary, -B, -M, -C, --find-copies-harder, -b,
+-w, --ext-diff, --no-ext-diff, --pretty=<format>, --no-merges,
+--left-right
+
+DESCRIPTION
+-----------
+
+If no separator (ie, ".." or "...") is specified, the command
+--------------------------
+git log [opts] <limb1>/branch_name [--] [<patch>...]
+--------------------------
+is run for each branch in <limb1>.  The name of the current limb is
+substituted for <limb1> if it is omitted.  Unless otherwise specified,
+--max-count=1 is passed as an option, so that only one commit is shown
+for each branch.
+
+Otherwise, if a separator (ie, ".." or "...") is specified, each
+branch in <limb1> is compared to the correspondingly named branch in
+<limb2>.  git-log-limb runs
+--------------------------
+git log [opts] <limb1>/branch_name..<limb2>/branch_name [--] [<path>...]
+--------------------------
+for each branch in <limb1> and <limb2>.  The name of the current limb
+is substituted for <limb1> or <limb2> if either is omitted.
+
+Note that "..." may also be used as a separator instead of ".." to
+commits that are in either limb, but not in the other limb.
+
+Author
+------
+Command written by Dale Farnsworth <dfarnsworth@mvista.com>
+
+Documentation gathered by Perry Wagle <pwagle@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

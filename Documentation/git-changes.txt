@@ -1,0 +1,73 @@
+git-changes(1)
+==============
+
+NAME
+----
+
+git-changes - generate report on which changes need to propagate
+through a limb.
+
+SYNOPSIS
+--------
+'git-changes' [-v] -l [<limb>]
+
+'git-changes' [-v] [<left> [<right>]]
+
+DESCRIPTION
+-----------
+
+This program can be used to determine which changes should be
+cherry-picked between branches in the limb. It has two modes of
+operation. It can list all branches containing changes that should be
+propagated to a particular branch, or it can list all of the commit
+IDs of changes that should be propagated from one specified branch to
+another.
+
+'git-changes' [-v] -l [<limb>]::
+
+    The limb specified by <limb> (if omitted, the current limb) is
+    examined.  Each of the limb's branches that has pending changes
+    from one or more branches is listed, followed by the status of
+    each branch on which it depends.  If -v is NOT specified, then each
+    status appears only once.
+
+'git-changes' [-v] [<left-branch> [<right-branch>]]::
+
+    If <left-branch> is not specified, the name of the current branch is
+    listed, followed by the status of each branch on which it depends.
++
+If <left-branch> is specified, the output is a list of commit IDs, one per
+line, of commits in <left-branch> that are not in <right-branch> (the current
+branch, if it is omitted) based on the Change IDs of the commits
+in both branches.  If -v is specified, each commit's short description
+is appended to the its commit ID.
+
+Format of pending change status
+-------------------------------
+
+Each line of change status consists of two integers, separated by a
+plus (+) sign, followed by the name of the branch containing the
+pending changes.  The first integer is the number of pending commits
+contained directly in the branch.  The second integer is the number of
+pending commits contained in branches that that branch depends on
+(recursively).
+
+    Example:
+	mvl-2.6.24/dev.x86
+	    3 + 2 mvl-2.6.24/feature.rt
+
+There are 3 commits in the mvl-2.6.24/feature.rt branch that haven't
+been propagated to the mvl-2.6.24/dev.x86 branch, and there are 2
+commits in branches that the mvl-2.6.24/feature.rt branch depends on
+that haven't been propagated to the mvl-2.24/feature.rt branch.
+
+
+Author
+------
+Command written by Dale Farnsworth <dfarnsworth@mvista.com>
+
+Documentation gathered by Perry Wagle <pwagle@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

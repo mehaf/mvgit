@@ -1,0 +1,67 @@
+git-limb(1)
+===========
+
+NAME
+----
+
+git-limb - list, create, rename, delete, or show-dependencies of a limb.
+
+SYNOPSIS
+--------
+'git-limb'
+
+'git-limb' [-f ] [-R] [<limb1> [<limb2>]]
+
+'git-limb' [-m | -M] [-R] [<oldlimb>] <newlimb>
+
+'git-limb' [-d] [-R] <limb>
+
+'git-limb' [--deps] [<limb>]
+
+DESCRIPTION
+-----------
+
+
+'git-limb'::
+
+List branches in the current limb.  The current branch will be
+highlighted with an asterisk.
+
+'git-limb' [-f ] [-R] [-c] [<limb1> [<limb2>]]::
+
+Create a new limb named <limb1>.  It will start out with copies of all
+the branches in <limb2>.  If <limb2> is not given, the limb will be a
+copy of the current limb.  An existing limb <limb1> can be forced to
+be overwritten with the -f option.  All the sublimbs will be copied
+with the -R option.  If the current branch is in <limb1>, then it
+remains checked out.  Otherwise, if -c is specified, the first branch
+created will be the one checked out, and if -c is not specified, the
+branch that is checked out doesn't change.
+
+'git-limb' (-m | -M) [-R] [<oldlimb>] <newlimb>::
+
+Rename <oldlimb> to <newlimb>.  If <newlimb> exists, -M must be used
+to force the rename to happen.  Unless the -R (recursive) option is
+specified, only branches directly in the limb will be moved.  If -R is
+specified all sub-limbs are also moved.
+
+'git-limb' -d [-R] <limb>::
+
+Delete the branches in <limb>.  The -R option will cause sub-limbs to
+also be deleted.
+
+'git-limb' --deps [<limb>]::
+
+The contents of <limb>'s branch dependencies file is output, or the
+current limb if <limb> isn't specified.
+
+
+Author
+------
+Command written by Dale Farnsworth <dfarnsworth@mvista.com>
+
+Documentation gathered by Perry Wagle <pwagle@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

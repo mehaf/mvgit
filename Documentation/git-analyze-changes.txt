@@ -1,0 +1,60 @@
+git-provenance(1)
+=================
+
+NAME
+----
+
+git-analyze-changes - Analyze the changes between two limbs
+
+SYNOPSIS
+--------
+'git-analyze-changes' [-r <remote>] [[-u <branchname>]...]
+		[-v] [-p] [-h] [[<limb1>..]<limb2>]
+
+DESCRIPTION
+-----------
+Compares each of the commits in the branches that are common to
+<limb1> and <limb2> and summarizes the changes, noting deleted,
+modified and new commits.
+
+OPTIONS
+-------
+<limb1>::
+	The first limb to compare.  If it is omitted, the remote
+	limb corresponding to <limb2> is used.
+
+<limb2>::
+	The second limb to compare.  If it is omitted, the repository's
+	current limb is used.
+
+-r::
+	Specifies the remote alias to be used.  If it is omitted,
+	a heuristic is used to determine the remote alias.  The
+	heuristic may be overridden by specifying a value for the
+	git config variable "mvista.remote-alias".
+
+-v::
+	Verbose.  Display the commit descriptions for each deleted,
+	modified or new commit.
+
+-p::
+	Display the patch associated with each modified or new commit.
+	This option implies -v.
+
+-c::
+	Display only commits that are "created".  Implies -v and -p.
+
+-u::
+	Add an additional upstream reference provider branch <branchname>.
+	Multiple -u options are permitted.
+
+-h::
+	Display a help message.
+
+Author
+------
+Dale Farnsworth <dfarnsworth@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

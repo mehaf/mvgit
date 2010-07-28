@@ -1,0 +1,42 @@
+git-ls-limb(1)
+==============
+
+NAME
+----
+git-ls-limb - List names of limbs and their branches.
+
+SYNOPSIS
+--------
+[verse]
+'git ls-limb' [-R] [-b] [-l] [<limb>]
+
+DESCRIPTION
+-----------
+
+Lists the names of the branches and limbs contained in <limb>.
+
+OPTIONS
+-------
+-R::
+	Recursively list branches in sub-limbs.
+
+-b::
+	List only branches, not limbs.
+
+-l::
+	List only limbs, not branches.
+
+
+<limb>::
+	The name of the limb to start at.
+	If not specified, the current limb is used.
+
+Author
+------
+Command written by Dale Farnsworth <dfarnsworth@mvista.com>
+
+Documentation gathered by Perry Wagle <pwagle@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

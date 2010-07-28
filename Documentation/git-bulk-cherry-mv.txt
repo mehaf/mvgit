@@ -1,0 +1,247 @@
+git-bulk-cherry-mv(1)
+=====================
+
+NAME
+----
+git-bulk-cherry-mv - Cherry pick a range of commits into the working branch, 
+	             adding a MontaVista header to each one.
+
+SYNOPSIS
+--------
+'git-bulk-cherry-mv' [-x] [--bugz <bugno>] [--source <source>]
+		   [-e | --edit]
+		   [--disposition <disposition>] [--type <type>] [--]
+		   [rev1...rev2]
+
+DESCRIPTION
+-----------
+
+Given a range of commits, this tool runs git-cherry-pick on each commit and
+then creates a new commit using `git-commit-mv` to apply a MontaVista header.
+
+Like `git-cherry-pick`, this command requires your working tree to be clean (no
+modifications from the HEAD commit).
+
+To cherry-pick commits without an MV header, it is necessary to
+specify either the --edit option or all of the following options:
+--source, --bugz, --type, --disposition.
+
+OPTIONS
+-------
+The following three options control resuming or aborting a
+git-bulk-cherry-mv that has stopped in the middle due to need for programmer
+intervention.
+
+--continue::
+	Attempt to cherry-pick the current revision.
+
+--skip::
+	Skip the current revision being cherry-picked.
+
+--abort::
+	Abort the whole git-bulk-cherry-mv process, and go back to where you
+	started.
+
+
+-m::
+	Permit merges in the revision list.
+
+--no-signoff::
+	Pass the --no-signoff option to git-commit-mv.
+
+-x::
+	Add a string in the format "(Cherry picked from <commit>") to the
+	each new commit message.
+
+--edit::
+	Edit each commit message.
+
+--bugz <bugno>::
+	Fill in the "MR:" field of the MontaVista commit header with <bugno>.
+
+--source <string>::
+	Fill in the "Source:" field of skipthe MontaVista commit header with
+	the string specified in the command option.
+
+
+--type <string>::
+	Fill in the "Type:" field of the MontaVista commit header with the
+	string specified in the command option.
+
+--disposition <string>::
+	Fill in the "Disposition:" field of the MontaVista commit header with
+	the string specified in the command option.
+	
+[rev1..rev2]::
+	Cherry pick all commits from <rev1> to <rev2>, inclusively.   If the
+	specified revison range has merges, the -m option must be specified
+	in order to proceed.
+
+[--]::
+	Instead of picking a given revision range, read a set of commit IDs
+	from stdin (one commit per line) and cherry pick them.
+
+DISCUSSION
+----------
+
+If all four MontaVista header options are specified, `git-bulk-cherry-mv`
+will automagically generate the commit headers for all messages and
+run w/o human intervention. If all four header options are not specified,
+you will need to edit each commit message manually.
+
+EXAMPLE
+-------
+
+The following example cherry-picks all the changes between kernels
+v2.6.24.2 and v2.6.24.3 into the current working tree:
+
+------------
+$ git-bulk-cherry-mv --bugz 27076 --disposition Backport --source  "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-2.6.24.y.git" --type Integration v2.6.24.2..v2.6.24.3^1
+Cherry picking revision 9884948ab9d3ff59a1d77fd24c2d93af7686225f
+Created commit 9279a40: SPARC/SPARC64: Fix usage of .section .sched.text in
+assembler code.
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+Cherry picking revision c17ebea7bec9333f4208ba25d8ebe3ccc2bb8598
+Created commit 9040ab4: NETFILTER: nf_conntrack_tcp: conntrack reopening
+fix
+ 1 files changed, 27 insertions(+), 8 deletions(-)
+Cherry picking revision a1a0d79533b9698b3a40d0091fe69a86386d44bb
+Created commit 2bd77ea: NFS: Fix a potential file corruption issue when
+writing
+ 1 files changed, 17 insertions(+), 3 deletions(-)
+Cherry picking revision 0cc3ec3d1add90d860786382dc5abe7ca94d242e
+Created commit 71c47e0: inotify: fix check for one-shot watches before
+destroying them
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+Cherry picking revision 091a61f602b7db7f4d1fdcb41e6ff9a97a6e0cce
+Created commit 0da6bce: hugetlb: add locking for overcommit sysctl
+ 3 files changed, 12 insertions(+), 1 deletions(-)
+Cherry picking revision 311fd5af55d60bea90c25ac314ba648e9415fd1f
+Created commit 8b7cbe6: XFS: Fix oops in xfs_file_readdir()
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+Cherry picking revision 0a2395cc34d5d170a6597c41435de9199f187437
+Created commit 9be86cb: Fix dl2k constants
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+Cherry picking revision c5ae77d37bde1e9b2db48026f6a483a7fd08c076
+Created commit c6362c5: SCSI: sd: handle bad lba in sense information
+ 1 files changed, 16 insertions(+), 18 deletions(-)
+Cherry picking revision 5531e217653acba748a687e949e9e2f39462c969
+Created commit 40665e4: TCP: Fix a bug in
+strategy_allowed_congestion_control
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+Cherry picking revision 79a25f70244c66402c99d9b32d19204dfded85d0
+Created commit b1bba90: TC: oops in em_meta
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+Cherry picking revision 07e6e223bed8c3d387f92f92a4706ff6d601b285
+Created commit 766bba7: SELinux: Fix double free in
+selinux_netlbl_sock_setsid()
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+Cherry picking revision e2a0956c9d1c9eebd51849c58fcbc7477c618a19
+Created commit 09756c1: PKT_SCHED: ematch: oops from uninitialized variable
+(resend)
+ 1 files changed, 2 insertions(+), 3 deletions(-)
+Cherry picking revision 5fb7ba76544d95bfa05199f7394a442de5660be7
+Created commit c245561: NET: Add if_addrlabel.h to sanitized headers.
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+Cherry picking revision 3eb4493a1c64bb9c63979f73d471eba255cfa78c
+Created commit 245838a: IPV4: fib_trie: apply fixes from fib_hash
+ 1 files changed, 36 insertions(+), 21 deletions(-)
+Cherry picking revision f52a4f4ea2c5ea3dc17561d32d839a3051e47b0c
+Created commit 46b4a1e: IPV4: fib: fix route replacement, fib_info is
+shared
+ 1 files changed, 31 insertions(+), 16 deletions(-)
+Cherry picking revision cefe34bea77e194fd6b6a7a062e1620af2eef69f
+Created commit 5ce74f7: IPCOMP: Fix reception of incompressible packets
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+Cherry picking revision 363c11d7e1c2b2cc30e33416a518cea5ef9e0cc8
+Created commit edfb387: IPCOMP: Fetch nexthdr before ipch is destroyed
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+Cherry picking revision 4450ae03346faceb80a45b4d696c15f981080916
+Created commit 6cce0c6: INET_DIAG: Fix inet_diag_lock_handler error path.
+ 1 files changed, 6 insertions(+), 5 deletions(-)
+Cherry picking revision 8f08540f032d07a7fb8f7576140ca426c55396f3
+Created commit 23832b6: INET: Prevent out-of-sync truesize on ip_fragment
+slow path
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+Cherry picking revision 47b66fe95afa8400cefaea06263ab8948d8465ba
+Created commit 9928c3e: BLUETOOTH: Add conn add/del workqueues to avoid
+connection fail.
+ 1 files changed, 37 insertions(+), 11 deletions(-)
+Cherry picking revision 5e10c4208a7b87b4bc0e42622109a6d9e8453419
+Created commit e94abf1: AUDIT: Increase skb->truesize in audit_expand
+ 1 files changed, 7 insertions(+), 3 deletions(-)
+Cherry picking revision 58e6cf1df821c76f245a45da05f4ac8f880e3296
+Created commit c5fc162: Be more robust about bad arguments in
+get_user_pages()
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+Cherry picking revision 5ef76ae0cc433e1e5927e964ad3320842ee94106
+Created commit 110f490: Disable G5 NAP mode during SMU commands on U3
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+Cherry picking revision ab23ae27f48ee940397f7e9bc21c4d3e4eb8391e
+Created commit 9968b4d: hrtimer: fix *rmtp handling in hrtimer_nanosleep()
+ 3 files changed, 31 insertions(+), 39 deletions(-)
+Cherry picking revision 5214a170d6c2f1ff99c0aa9b8ed4be56d55f4ee4
+Created commit 74e8425: hrtimer: fix *rmtp/restarts handling in
+compat_sys_nanosleep()
+ 1 files changed, 40 insertions(+), 4 deletions(-)
+Cherry picking revision 227db665f6f946d376d48785b08d2b0cd1f21aad
+Created commit c09b663: SLUB: Deal with annoying gcc warning on kfree()
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+Cherry picking revision 85d1617924607c1311962546bb55367b9edb4ca6
+Created commit 446900c: hrtimer: check relative timeouts for overflow
+ 5 files changed, 30 insertions(+), 22 deletions(-)
+Cherry picking revision 4813a83f2665f7276f1e4eee9cffe45116cf3824
+Created commit 42995ca: hrtimer: catch expired CLOCK_REALTIME timers early
+ 1 files changed, 11 insertions(+), 0 deletions(-)
+Cherry picking revision 0466e6b39901c5af878300cf43485ae581b252cb
+Created commit 7d649e2: genirq: do not leave interupts enabled on free_irq
+ 1 files changed, 19 insertions(+), 1 deletions(-)
+Cherry picking revision 365b073075ef23cfdd8ba68720e7de3b4dbe4f1b
+Created commit 6045728: S390: Fix futex_atomic_cmpxchg_std inline assembly.
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+Cherry picking revision 8b0ccb03f068cf8561efd51e88cbdf3f345163b9
+Created commit 4116ec6: USB: fix pm counter leak in usblp
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+Cherry picking revision 4cf87f7ef5c892c0a3d21a14724fcae1bb9ec8d6
+Created commit a4d8fd3: SCSI: gdth: scan for scsi devices
+ 1 files changed, 9 insertions(+), 0 deletions(-)
+Cherry picking revision 80e9255328f9f1c2a6aa7422be1f0a87a4a9cb7b
+Created commit a1e8fd0: PCMCIA: Fix station address detection in smc
+ 1 files changed, 10 insertions(+), 2 deletions(-)
+Cherry picking revision a3b89e6d7396b874b8e7ec25378bb479418ef2d5
+Created commit a30e38d: POWERPC: Revert chrp_pci_fixup_vt8231_ata devinit
+to fix libata on pegasos
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+Cherry picking revision f7e1b66a194e38f9fa41f8144aa34b782fb4f53a
+Created commit 228b943: bonding: fix NULL pointer deref in startup
+processing
+ 1 files changed, 9 insertions(+), 7 deletions(-)
+Cherry picking revision 7a0fd2e6b0190e5dd2bfe71a0b4f10826811418e
+Created commit 6dcb127: x86_64: CPA, fix cache attribute inconsistency bug
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+Bulk cherry-pick finished
+------------
+
+TODO
+----
+Cleanup after ourselves a bit better and get rid of all temp files and directories.
+
+
+Support multiple ranges at once via command line.  Workaround is to use the --stdin option.
+
+
+Separate out MV-specific bits and send generic bulk cherry-pick support upstream.
+
+
+SEE ALSO
+--------
+linkgit:git-commit[1],
+linkgit:git-cherry-pick[1]
+
+Author
+------
+Written by Deepak Saxena <dsaxena@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

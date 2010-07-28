@@ -1,0 +1,58 @@
+
+git-quiltexport-mv(1)
+=====================
+
+NAME
+----
+git-quiltexport-mv - Export a set of patches for quilt.
+
+SYNOPSIS
+--------
+'git-quiltexport-mv' [--outputdir <directory>] [--seriesfile <file>]
+		     [--patchprefix <file>] [--append] [--startnumber <number>]
+		     <rev>
+
+DESCRIPTION
+-----------
+
+This command is deprecated.  Speak up if you have a use for it.
+
+Export a set of patches for quilt. Allows for
+adding a prefix to the patch files, appending an existing series file,
+etc. I will be using this to autogenerate the series file for the f2.6.24
+builds out of CVS. Run "git-quiltexport-mv --help" for options.
+
+
+OPTIONS
+-------
+--outputdir <directory>::
+	Directory to put the patch and series file in.
+	Defaults to "/tmp/patches".
+
+--seriesfile <file>::
+	Name of series file.
+	Defaults to "series".
+
+--patchprefix <file>::
+	Prefix for patch file names.
+	Defaults to empty string.
+
+--append::
+	Append to series file instead of the default overwrite.
+
+--startnumber <number>::
+	Starting patch number.
+	Defaults to "1".
+
+<rev>::
+	Commitish of the commit to start the patches at.
+
+
+Author
+------
+Written by Deepak Saxena <dsaxena@mvista.com>
+Documentation written by Perry Wagle <pwagle@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite

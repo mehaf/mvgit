@@ -1,0 +1,109 @@
+git-commit-mv(1)
+================
+
+NAME
+----
+git-commit-mv - git-commit with MontaVista extensions
+
+SYNOPSIS
+--------
+[verse]
+'git-commit-mv' [-c <commit> [-x]] [--bugz <bugno>] [--type <string>]
+	      [--disposition <string>] [--source <string>] [--oneline <string>]
+	      [--bodyfile <file>] [--no-edit] [git-commit options]
+
+DESCRIPTION
+-----------
+`git-commit-mv` is an extension on top of the standard `git-commit` command
+that is aware of the MontaVista commit header format.
+
+A commit generated with this command has the following format:
+
+------------
+Oneline summary of change, less then 60 characters
+
+Source: MontaVista Software, LLC | URL | Some Guy <email@addr>
+MR: <bugno>
+Type: Defect Fix | Security Fix | Enhancement | Integration
+Disposition: Submitted to | Needs submitting to | Merged from | Rejected by | Backport | Local | MontaVista
+Description:
+
+Verbose description of the change
+
+Signed-off-by: Your Name <email@mvista.com>
+------------
+
+OPTIONS
+-------
+-C <commit>::
+	Take existing commit object, and reuse the log message
+	and the authorship information (including the timestamp)
+	when creating the commit. 
+-c <commit>::
+	Same as -C <commit> above, but lets you edit the commit message. 
+-x::
+	Add a "(Cherry picked from <commit>)" when used with the -c option.
+
+--bugz <bugno>::
+	Fill in the "MR:" field of the MontaVista commit header with <bugno>.
+
+--source <string>::
+	Fill in the "Source:" field of the MontaVista commit header with the
+	string specified in the command option.
+
+--type <string>::
+	Fill in the "Type:" field of the MontaVista commit header with the
+	string specified in the command option.
+
+--disposition <string>::
+	Fill in the "Disposition:" field of the MontaVista commit header with the
+	string specified in the command option.
+
+--oneline <string>::
+	Use the string specified in the command option as the subject/oneline 
+	of the commit message. This option is primarilly intended for use
+	by higher level automation scripts.
+
+--bodyfile <file>::
+	Use the file specified in the command option for the body of the 
+	commit (the contents between the "Description:" sub-header and
+	the final "Signed-off-by"
+
+--no-edit::
+	Do not run $GIT_EDITOR to edit the commit message but instead simply
+	commit the changes with the header generated via the command line
+	options. This option is primarilly inteded for use by higher level
+	automation scripts.
+
+--no-signoff::
+	Default behavior is to add a Signed-off-by: line to the end of the
+	commit message.  This option disables that.
+
+--changeid <hash>::
+	Don't use this option.  Let it be computed for you.  It's
+	behind-the-scenes plumbing for the git-bulk-cherry-mv command.
+
+DISCUSSION
+----------
+
+Any other options specified on the command line are passed directly to
+`git-commit`, such that one can do `git-commit-mv [mv-options] -a` to commit
+all local changes. Note that not all `git-commit` options are compatible
+with `git-commit-mv`.
+
+
+Note that no validation is done on the MontaVista-specific sub-header
+fields at this time. This functionality will be added in the future.
+
+SEE ALSO
+--------
+linkgit:git-commit[1]
+
+Author
+------
+Written by Deepak Saxena <dsaxena@mvista.com>
+
+
+GIT
+---
+Part of the linkgit:git[7] suite

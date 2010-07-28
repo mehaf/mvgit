@@ -1,0 +1,73 @@
+git-provenance(1)
+=================
+
+NAME
+----
+
+git-provenance - list the branches from which commits were cherry-picked
+
+SYNOPSIS
+--------
+'git-provenance' [-a] [-t[t]] [-v] [[-u <branchname>]...]
+		[[-i <istr>]...] [[-x <xstr>]...]
+		[<branch> [[<commitID>|<changeID>]...]]
+
+DESCRIPTION
+-----------
+For each commit in <branch> (default current branch) since the limb's
+common kernel version, this command displays the commit's ID followed
+by the commit ID and branch name of each provider commit from which
+the commit was (recursively) cherry-picked.
+
+The default output consists of a line containing the commit ID for
+each commit in <branch> followed by a line for each provider commit
+containing the provider commit's ID and branch name.  The provider
+commit ID is preceded by whitespace and is separated from the provider
+branch name by a space.
+
+OPTIONS
+-------
+<branch>::
+	The branch whose commits are to be displayed.  It defaults to
+	the current branch.
+
+<commitID>::
+<changeID>::
+	If any <commitID> or <changeID> arguments are given, the output
+	is limited to commits in <branch> whose commit ID and/or changeID
+	begins with <commitID> or <changeID>.
+
+-a::
+	Display abbreviated commit IDs.
+
+-v::
+	Verbose.  Append the commit's subject to the line for each commit
+	in <branch>.
+
+-t::
+	Terse.  Display all information related to a commit in one line.
+	The output will consist of one line for each commit in <branch>.
+	If a second -t is specified, the information about provider
+	branches is omitted from the output.
+
+-i::
+	Only display commits in <branch> whose provider branch names
+	contain the substring <istr>.  To display all commits that
+	were cherry-picked from any branch, use: -i "".
+
+-x::
+	Only display commits in <branch> whose provider branch names
+	do not contain the substring <xstr>.  To display only commits
+	that were not cherry-picked from any branch, use: -x "".
+
+-u::
+	Add an additional upstream reference provider branch <branchname>.
+	Multiple -u options are permitted.
+
+Author
+------
+Dale Farnsworth <dfarnsworth@mvista.com>
+
+GIT
+---
+Part of the linkgit:git[7] suite
