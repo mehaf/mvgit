@@ -1,5 +1,5 @@
-git-provenance(1)
-=================
+git-analyze-changes(1)
+======================
 
 NAME
 ----

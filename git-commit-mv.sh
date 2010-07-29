@@ -15,8 +15,6 @@
 #
 # Verbose description of the change
 #
-# (Cherry-picked from commit <commit>)
-#
 # Signed-off-by: Name <email@mvista.com>
 #
 #####################################################################################

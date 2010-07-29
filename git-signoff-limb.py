@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Usage: git-signoff-limb [opts] <limb1>..[<limb2>]
-	opts	These options are passed directly to git-signoff-mv:
+	opts	These options are passed directly to git signoff-mv:
 		--ack, --name=<name>, --email=<email>
 		--bugz=<bugno>, --disposition=<disp>,
 		--source=<source>, --type=<type> ]

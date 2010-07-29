@@ -51,7 +51,7 @@ fi
 rev="$1"
 
 #
-# Validate that the rev given in the commaind line is an actual
+# Validate that the rev given in the command line is an actual
 # revision in the tree.
 #
 git rev-parse --verify $rev > /dev/null 2>&1
@@ -62,7 +62,7 @@ fi
 
 #
 # Check for linear history.
-# We don't allow quitl exporting out of non-linear histories as
+# We don't allow quilt exporting out of non-linear histories as
 # we are not guaranteed a clean set of patches that will apply on
 # top of each other.
 #
