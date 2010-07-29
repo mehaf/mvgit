@@ -151,7 +151,7 @@ def main():
         git.check_repository()
         merge_limb()
 
-    except gitlib.GitError, e:
+    except git.GitError, e:
 	sys.stderr.write("\nError: %s\n" % e.msg)
 	sys.stderr.write("Exiting.\n")
 
