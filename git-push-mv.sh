@@ -64,7 +64,7 @@ transform () {
     perl -ne 'if (m'"$format"') { print '"$cmd"' ; } else { exit 1 ; }'
 }
 #-----------------------------------------------------------------------------
-. git-sh-setup
+. $(git --exec-path)/git-sh-setup
 require_work_tree
 cd_to_toplevel
 

@@ -4,7 +4,7 @@ USAGE='[--append] [--patchprefix prefix] [--seriesfile <filename>] [--startnumbe
 
 SUBDIRECTORY_OK=Yes
 OPTIONS_SPEC=
-. git-sh-setup
+. $(git --exec-path)/git-sh-setup
 set_reflog_action rebase
 require_work_tree
 cd_to_toplevel
