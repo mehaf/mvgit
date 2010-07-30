@@ -17,3 +17,4 @@ git-quiltexport-mv
 git-rebase-limb
 git-signoff-limb
 git-signoff-mv
+git-cherry-pick-mv

@@ -48,6 +48,7 @@ SCRIPT_PYTHON += git-provenance.py
 SCRIPT_PYTHON += git-push-limb.py
 SCRIPT_PYTHON += git-rebase-limb.py
 SCRIPT_PYTHON += git-signoff-limb.py
+SCRIPT_PYTHON += git-cherry-pick-mv.py
 
 SCRIPTS = $(patsubst %.sh,%,$(SCRIPT_SH)) \
 	  $(patsubst %.py,%,$(SCRIPT_PYTHON))
