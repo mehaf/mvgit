@@ -156,7 +156,14 @@ pdf:
 
 ### Installation rules
 
-install: all
+remove-oldversions:
+	$(QUIET_GEN)for p in $(ALL_PROGRAMS) $(OTHER_INSTALL); do \
+			fp="$$(git --exec-path)/$$p"; \
+			test -f $$fp && $(RM) $$fp; \
+			true; \
+		done
+
+install: all remove-oldversions
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bindir_SQ)'
 	$(INSTALL) $(ALL_PROGRAMS) $(OTHER_INSTALL) '$(DESTDIR_SQ)$(bindir_SQ)'
 
@@ -191,3 +198,4 @@ clean:
 .PHONY: all install clean strip
 .PHONY: shell_compatibility_test please_set_SHELL_PATH_to_a_more_modern_shell
 .PHONY: .FORCE-MVGIT-VERSION-FILE
+.PHONY: remove-oldversions
