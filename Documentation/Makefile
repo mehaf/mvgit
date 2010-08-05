@@ -178,7 +178,7 @@ clean:
 	$(QUIET_XMLTO)$(RM) $@ && \
 	xmlto -m $(MANPAGE_XSL) $(XMLTO_EXTRA) man $<
 
-%.xml : %.txt
+%.xml : %.txt ../MVGIT-VERSION-FILE
 	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
 	$(ASCIIDOC) -b docbook -d manpage -f asciidoc.conf \
 		$(ASCIIDOC_EXTRA) -amvgit_version=$(MVGIT_VERSION) -o $@+ $< && \

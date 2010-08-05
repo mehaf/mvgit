@@ -13,6 +13,7 @@ SYNOPSIS
 --------
 [verse]
 'git signoff-limb' [options] <limb1>..[<limb2>]
+'git signoff-limb' --version
 
 DESCRIPTION
 -----------

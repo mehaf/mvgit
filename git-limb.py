@@ -64,7 +64,7 @@ def usage(msg=None):
 
 def process_options():
     short_opts = "cfhmMdR"
-    long_opts = [ "help", "debug", "deps" ]
+    long_opts = [ "help", "debug", "deps", "version" ]
 
     try:
         options, args = getopt.getopt(sys.argv[1:], short_opts, long_opts)
@@ -77,6 +77,9 @@ def process_options():
 	    usage()
 	elif option == "--debug":
 	    config["debug"] = True
+	elif option == '--version':
+	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
+	    sys.exit(0)
         elif option == "-c":
 	    config["checkout"] = True
         elif option == "-f":

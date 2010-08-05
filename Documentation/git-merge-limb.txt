@@ -10,6 +10,7 @@ SYNOPSIS
 --------
 [verse]
 'git merge-limb' [options] <remote> [<limb>]
+'git merge-limb' --version
 
 DESCRIPTION
 -----------

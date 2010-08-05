@@ -128,7 +128,7 @@ $(patsubst %.sh,%,$(SCRIPT_SH)) : % : %.sh
 $(patsubst %.py,%,$(SCRIPT_PYTHON)) : % : %.py
 	$(QUIET_GEN)$(RM) $@ $@+ && \
 	sed -e '1s|#!.*/python|#!$(PYTHON_PATH_SQ)|' \
-	    -e 's/@@MVGIT_VERSION@@/"$(MVGIT_VERSION)"/g' \
+	    -e 's/@@MVGIT_VERSION@@/$(MVGIT_VERSION)/g' \
 	    $@.py >$@+ && \
 	chmod +x $@+ && \
 	mv $@+ $@

@@ -10,6 +10,7 @@ SYNOPSIS
 [verse]
 'git push-mv' [--branch <branch>] [--bugz <bugno>|--dev]
 	    [--merge <email>] [--review <email>] <repo>
+'git push-mv' --version
 
 DESCRIPTION
 -----------

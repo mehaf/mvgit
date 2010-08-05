@@ -12,6 +12,7 @@ SYNOPSIS
 [verse]
 'git changes' [-v] -l [<limb>]
 'git changes' [-v] [<left> [<right>]]
+'git changes' --version
 
 DESCRIPTION
 -----------

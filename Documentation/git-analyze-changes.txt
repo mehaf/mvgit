@@ -11,6 +11,7 @@ SYNOPSIS
 [verse]
 'git analyze-changes' [-r <remote>] [[-u <branchname>]...]
 		    [-v] [-p] [-h] [[<limb1>..]<limb2>]
+'git analyze-changes' --version
 
 DESCRIPTION
 -----------

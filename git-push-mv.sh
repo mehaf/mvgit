@@ -76,6 +76,10 @@ REVIEW_REQUEST=""
 
 while [ "$#" != 0 ] ; do
     case "$1" in
+	--version)
+		echo mvgit version @@MVGIT_VERSION@@
+		exit 0
+		;;
 	--branch)  # ---branch <branch>
 	    if [ -n "$LOCAL_HEAD" ] ; then
 		ERROR "can't use --branch option more than once"

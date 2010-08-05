@@ -12,6 +12,7 @@ SYNOPSIS
 	      [--disposition <string>] [--source <string>]
 	      [--oneline <string>]
 	      [--bodyfile <file>] [--no-edit] [git-commit options]
+'git commit-mv' --version
 
 DESCRIPTION
 -----------

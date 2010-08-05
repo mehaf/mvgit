@@ -15,6 +15,7 @@ SYNOPSIS
 	[-r <repo>]		Git repository to use
 	[-s <since>]		Parent commit of patch series
 	[-n || --dryrun]	Suppress output files
+'git mvl6-releasify' --version
 
 DESCRIPTION
 -----------

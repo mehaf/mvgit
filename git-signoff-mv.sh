@@ -12,6 +12,10 @@ changeid=
 
 while test $# != 1 ; do
 	case "$1" in
+	--version)
+		echo mvgit version @@MVGIT_VERSION@@
+		exit 0
+		;;
 	--name)
 		name="$2"
 		shift

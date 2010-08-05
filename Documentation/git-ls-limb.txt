@@ -9,6 +9,7 @@ SYNOPSIS
 --------
 [verse]
 'git ls-limb' [-R] [-b] [-l] [<limb>]
+'git ls-limb' --version
 
 DESCRIPTION
 -----------

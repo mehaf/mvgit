@@ -11,6 +11,7 @@ SYNOPSIS
 'git quiltexport-mv' [--outputdir <directory>] [--seriesfile <file>]
 		   [--patchprefix <file>] [--append] [--startnumber <number>]
 		   <rev>
+'git quiltexport-mv' --version
 
 DESCRIPTION
 -----------

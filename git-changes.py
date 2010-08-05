@@ -79,7 +79,7 @@ def usage(msg=None):
 
 def process_options():
     short_opts = "ahlv"
-    long_opts = ["help", "debug", "dependents="]
+    long_opts = ["help", "debug", "dependents=", "version"]
 
     try:
         options, args = getopt.getopt(sys.argv[1:], short_opts, long_opts)
@@ -92,6 +92,9 @@ def process_options():
 	    usage()
 	elif option == "--debug":
 	    config["debug"] = True
+	elif option == '--version':
+	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
+	    sys.exit(0)
 	elif option == "-v":
 	    config["verbose"] = True
 	elif option == "-l":

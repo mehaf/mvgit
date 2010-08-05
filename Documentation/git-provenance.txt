@@ -12,6 +12,7 @@ SYNOPSIS
 'git provenance' [-a] [-t[t]] [-v] [[-u <branchname>]...]
 	       [[-i <istr>]...] [[-x <xstr>]...]
 	       [<branch> [[<commitID>|<changeID>]...]]
+'git provenance' --version
 
 DESCRIPTION
 -----------

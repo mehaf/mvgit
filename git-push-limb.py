@@ -41,7 +41,8 @@ def usage(msg=None):
 def process_options():
     short_opts = "fh"
     long_opts = [
-	"help", "debug", "dry-run", "tags", "force", "thin", "no-thin"
+	"help", "debug", "dry-run", "tags", "force", "thin", "no-thin",
+	"version",
     ]
 
     try:
@@ -55,6 +56,9 @@ def process_options():
             usage()
 	elif option == "--debug":
 	    config["debug"] = True
+	elif option == '--version':
+	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
+	    sys.exit(0)
 	elif value:
 	    if option.startswith("--"):
 		config["options"].append("%s=%s" % (option, value))

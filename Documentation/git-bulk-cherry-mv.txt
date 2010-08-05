@@ -13,6 +13,7 @@ SYNOPSIS
 		   [-e | --edit]
 		   [--disposition <disposition>] [--type <type>] [--]
 		   [rev1...rev2]
+'git bulk-cherry-mv' --version
 
 DESCRIPTION
 -----------

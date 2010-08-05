@@ -10,6 +10,7 @@ SYNOPSIS
 --------
 [verse]
 'git push-limb' [options] [<remote_repo> [<local_limb>][:<remote_limb>]]
+'git push-limb' --version
 
 DESCRIPTION
 -----------

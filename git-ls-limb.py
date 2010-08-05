@@ -39,7 +39,7 @@ def usage(msg=None):
 
 def process_options():
     short_opts = "Rbhl"
-    long_opts = ["help", "debug"]
+    long_opts = ["help", "debug", "version"]
 
     try:
         options, args = getopt.getopt(sys.argv[1:], short_opts, long_opts)
@@ -52,6 +52,9 @@ def process_options():
 	    usage()
 	elif option == "--debug":
 	    config["debug"] = True
+	elif option == '--version':
+	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
+	    sys.exit(0)
         elif option == "-R":
 	    config["recursive"] = True
         elif option == "-b":

@@ -16,6 +16,10 @@ startnum=1
 while test $# != 0
 do
 	case "$1" in
+	--version)
+		echo mvgit version @@MVGIT_VERSION@@
+		exit 0
+		;;
 	--outputdir)
 		outputdir="$2"
 		shift;

@@ -73,7 +73,7 @@ def process_options():
     global debug, verbose, limb1_name, limb2_name, separator, paths, patch
     global created_only, remote_alias
     short_opts = 'cr:hpu:v'
-    long_opts = [ 'help', 'debug', 'verbose' ]
+    long_opts = [ 'help', 'debug', 'verbose', 'version' ]
 
     try:
         options, args = getopt.getopt(sys.argv[1:], short_opts, long_opts)
@@ -86,6 +86,9 @@ def process_options():
 	    usage()
 	elif option == '--debug':
 	    debug = True
+	elif option == '--version':
+	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
+	    sys.exit(0)
 	elif option == '--verbose' or option == '-v':
 	    verbose = True
 	elif option == '-p':

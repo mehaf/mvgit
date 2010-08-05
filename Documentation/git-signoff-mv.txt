@@ -11,6 +11,7 @@ SYNOPSIS
 'git signoff-mv' [--ack] [--nack] [--name <name>] [--email <email>]
                [--bugz <bug_number>] [--disposition <disposition>]
 	       [-f|--force] [--source <source>] [--type <type>] <rev-list>
+'git signoff-mv' --version
 
 DESCRIPTION
 -----------

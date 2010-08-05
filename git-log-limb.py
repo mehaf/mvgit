@@ -58,7 +58,8 @@ def process_options():
 	"name-only", "name-status", "color", "no-color",
 	"color-words", "no-renames", "check", "full-index",
 	"binary", "find-copies-harder", "ext-diff", "no-ext-diff",
-	"pretty=", "no-merges", "max-count=", "left-right"
+	"pretty=", "no-merges", "max-count=", "left-right",
+	"version",
     ]
 
     try:
@@ -72,6 +73,9 @@ def process_options():
 	    usage()
 	elif option == "--debug":
 	    config["debug"] = True
+	elif option == '--version':
+	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
+	    sys.exit(0)
 	elif value:
 	    if option.startswith("--"):
 		config["options"].append("%s=%s" % (option, value))
