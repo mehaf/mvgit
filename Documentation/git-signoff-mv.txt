@@ -8,9 +8,10 @@ git-signoff-mv - Add a sign-off or acked line to a set of commits
 SYNOPSIS
 --------
 [verse]
-'git signoff-mv' [--ack] [--nack] [--name <name>] [--email <email>]
+'git signoff-mv' [--ack|--nack|-n] [--name <name>] [--email <email>]
                [--bugz <bug_number>] [--disposition <disposition>]
-	       [-f|--force] [--source <source>] [--type <type>] <rev-list>
+	       [-f|--force] [--source <source>] [--type <type>]
+	       [--changeid <changeid>] <rev-list>
 'git signoff-mv' --version
 
 DESCRIPTION
@@ -40,24 +41,38 @@ OPTIONS
 --nack::
 	Instead of a "Signed-off-by" line, add an "Nacked-by" line.
 
+-n::
+	Don't add a sign-off line.
+
 --name <name>::
-	Use <name> as the name in the sign-off
+	Use <name> as the name in the sign-off.
 
 --email <email>::
-	Use <email> as the email in the sign-off
+	Use <email> as the email in the sign-off.
 
 --bugz <bug_number>::
 	Add a second bug number to the MR: line of the subheader.  Use when
-	'git bulk-cherry' didn't do the right thing.
+	'git bulk-cherry' didn't do the right thing.  If <bug_number> is
+	null, any existing MR: line will be removed.
 
 --disposition <disposition>::
 	Value of Disposition: line to be added to the commit message subheader.
+	If <disposition> is null, any existing Disposition: line will be
+	removed.
 
 --source <source>::
 	Value of Source: line to be added to the commit message subheader.
+	if <source> is null, any existing Source: line will be removed.
 
 --type <type>::
 	Value of Type: line to be added to the commit message subheader.
+	if <type> is null, any existing Type: line will be removed.
+
+--changeid <changeid>::
+	Value of ChangeID: line to be added to the commit message subheader.
+	If <changeid> is null, any existing ChangeID line will be removed.
+	If <changeid> is "-", a changeid value will be generated from the
+	previous commit ID.
 
 -f | --force::
 	'git signoff-mv' uses 'git filter-branch' internally.  Sometimes

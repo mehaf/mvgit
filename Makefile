@@ -34,7 +34,6 @@ SCRIPT_SH += git-bulk-cherry-mv.sh
 SCRIPT_SH += git-commit-mv.sh
 SCRIPT_SH += git-push-mv.sh
 SCRIPT_SH += git-quiltexport-mv.sh
-SCRIPT_SH += git-signoff-mv.sh
 
 SCRIPT_PYTHON += git-analyze-changes.py
 SCRIPT_PYTHON += git-changes.py
@@ -49,6 +48,7 @@ SCRIPT_PYTHON += git-push-limb.py
 SCRIPT_PYTHON += git-rebase-limb.py
 SCRIPT_PYTHON += git-signoff-limb.py
 SCRIPT_PYTHON += git-cherry-pick-mv.py
+SCRIPT_PYTHON += git-signoff-mv.py
 
 SCRIPTS = $(patsubst %.sh,%,$(SCRIPT_SH)) \
 	  $(patsubst %.py,%,$(SCRIPT_PYTHON))
