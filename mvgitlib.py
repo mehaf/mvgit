@@ -706,24 +706,26 @@ class Branch(Ref):
 	    sys.exit(1)
 
 
-    def changeids_with_commits(self):
+    @cached_property
+    def changeid_to_commit(self):
 	'''
-	Return a list of (changeid, commit) tuples of added commits
+	Return a mapping (dict) of each added changeid to its commit
 
 	Commits are those added to this branch since the limb's merge
 	base to those commits
 	'''
-	return [(x.changeid, x) for x in self.commits]
+	return dict([(x.changeid, x) for x in self.commits])
 
 
-    def first_parent_changeids_with_commits(self):
+    @cached_property
+    def first_parent_changeid_to_commit(self):
 	'''
-	Return a list of (changeid, commit) tuples of added commits
+	Return a mapping (dict) of each added changeid to its commit
 
 	Commits are those added to this branch since the limb's merge
 	base to those commits
 	'''
-	return [(x.changeid, x) for x in self.first_parent_commits]
+	return dict([(x.changeid, x) for x in self.first_parent_commits])
 
 
     @property
@@ -917,14 +919,46 @@ class Branch(Ref):
 	return changes
 
 
+    def from_branches_and_commits(self, changeid, new=False):
+	from_branches_dict = {}
+	from_commits_dict = {}
+	from_branches_and_commits = []
+
+	for branch in self.providers:
+	    if new and hasattr(branch, 'newbranch'):
+		if branch.newbranch:
+		    branch = branch.newbranch
+	    if changeid in branch.changeid_to_commit:
+		bc_list = branch.from_branches_and_commits(changeid, new)
+		for from_branch, from_commit in bc_list:
+		    if new and hasattr(from_branch, 'newbranch'):
+			if from_branch.newbranch:
+			    from_branch = from_branch.newbranch
+		    if from_branch in from_branches_dict:
+			continue
+		    if from_commit in from_commits_dict:
+			continue
+		    from_commits_dict[from_commit] = True
+		    from_branches_and_commits.append((from_branch, from_commit))
+
+		if branch in from_branches_dict:
+		    continue
+		commit = branch.changeid_to_commit[changeid]
+		if commit in from_commits_dict:
+		    continue
+		from_commits_dict[commit] = True
+		from_branches_and_commits.append((branch, commit))
+
+	return from_branches_and_commits
+
+
     def provenance(self, new=False):
 	'''
-	Returns a tuple for each commit on self in the range stop to start.
+	Returns a tuple for each commit on self in the commit range.
 
 	Each tuple consists of (commit, string_describing_change)
 	'''
 
-	change_dicts = {}
 	commits_with_change = []
 
 	if new:
@@ -932,27 +966,14 @@ class Branch(Ref):
 	else:
 	    commits = self.commits
 	for commit in commits:
-	    changeid = commit.changeid
 	    from_commits = []
 	    from_branches = []
-	    for from_branch in self.all_providers:
-		if new and hasattr(from_branch, 'newbranch'):
-		    if from_branch.newbranch:
-			from_branch = from_branch.newbranch
-
-		if from_branch not in change_dicts:
-		    change_dict = dict(from_branch.changeids_with_commits())
-		    change_dicts[from_branch] = change_dict
-
-		from_branch_change_dict = change_dicts[from_branch]
-		if changeid in from_branch_change_dict:
-		    if from_branch not in from_branches:
-			from_commit = from_branch_change_dict[changeid]
-			from_commits.append(from_commit)
-			from_branches.append(from_branch)
-
-		if commit in from_commits:
-		    continue
+	    changeid = commit.changeid
+	    bc_list = self.from_branches_and_commits(changeid, new)
+	    for from_branch, from_commit in bc_list:
+		    from_commit = from_branch.changeid_to_commit[changeid]
+		    from_commits.append(from_commit)
+		    from_branches.append(from_branch)
 
 	    if from_commits:
 		commit.from_commits = from_commits
@@ -1451,17 +1472,14 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
     are in right, but not in left.
     """
 
-    left_changes_with_commits = left.first_parent_changeids_with_commits()
-    right_changes_with_commits = right.first_parent_changeids_with_commits()
-    left_dict = dict(left_changes_with_commits)
-    right_dict = dict(right_changes_with_commits)
+    left_dict = dict(left.changeid_to_commit)
+    right_dict = dict(right.changeid_to_commit)
 
     if not with_rejects:
 	for id in right.rejected_changes:
 	    right_dict[id] = None
 
-    left_ids = [x[0] for x in left_changes_with_commits]
-    left_commits = [left_dict[x] for x in left_ids if x not in right_dict]
+    left_commits = [left_dict[x] for x in left_dict if x not in right_dict]
 
     if not symmetric:
 	return left_commits
@@ -1470,8 +1488,7 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
 	for id in left.rejected_changes:
 	    left_dict[id] = None
 
-    right_ids = [x[0] for x in right_changes_with_commits]
-    right_commits = [right_dict[x] for x in right_ids if x not in left_dict]
+    right_commits = [right_dict[x] for x in right_dict if x not in left_dict]
 
     return (left_commits, right_commits)
 

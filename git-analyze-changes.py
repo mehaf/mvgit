@@ -477,13 +477,13 @@ def check_kernel_defconfigs(branch):
 	    checksetconfig[path] = False
 
 	cmd = ['git', 'rev-list', '-1', '--date=raw', '--pretty=format:%cd',
-		branch.name, '--', path]
+		'--remove-empty', branch.name, '--', path]
 	commit_time[path] = int(git.call(cmd).split()[2])
 
     if paths:
 	baseconfig_path = 'scripts/kconfig/baseconfig'
 	cmd = ['git', 'rev-list', '-1', '--date=raw', '--pretty=format:%cd',
-		branch.name, '--', baseconfig_path]
+		'--remove-empty', branch.name, '--', baseconfig_path]
 	base_config_time = git.call(cmd)
 	if base_config_time:
 	    base_config_time = int(base_config_time.split()[2])
