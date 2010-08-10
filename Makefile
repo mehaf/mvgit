@@ -177,12 +177,6 @@ install-man:
 install-html:
 	$(MAKE) -C Documentation install-html
 
-install-info:
-	$(MAKE) -C Documentation install-info
-
-install-pdf:
-	$(MAKE) -C Documentation install-pdf
-
 
 ### Cleaning rules
 

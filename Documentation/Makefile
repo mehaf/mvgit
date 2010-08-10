@@ -22,6 +22,7 @@ DOC_MAN1=$(patsubst %.txt,%.1,$(MAN1_TXT))
 prefix?=$(HOME)
 bindir?=$(prefix)/bin
 mandir?=$(prefix)/share/man
+htmldir?=$(prefix)/share/doc/git-doc
 man1dir=$(mandir)/man1
 # DESTDIR=
 
@@ -136,6 +137,9 @@ install-man: man
 	$(INSTALL) -d -m 755 $(DESTDIR)$(man1dir)
 	$(INSTALL) -m 644 $(DOC_MAN1) $(DESTDIR)$(man1dir)
 
+install-html: html
+	'$(SHELL_PATH_SQ)' ./install-webdoc.sh $(DESTDIR)$(htmldir)
+
 ../MVGIT-VERSION-FILE: .FORCE-MVGIT-VERSION-FILE
 	$(QUIET_SUBDIR0)../ $(QUIET_SUBDIR1) MVGIT-VERSION-FILE
 
@@ -173,6 +177,12 @@ clean:
 	$(RM) *.texi *.texi+ *.texi++ mvgit.info mvgitman.info
 	$(RM) doc.dep
 	$(RM) $(cmds_txt) *.made
+
+$(MAN_HTML): %.html : %.txt
+	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
+	$(ASCIIDOC) -b xhtml11 -d manpage -f asciidoc.conf \
+		$(ASCIIDOC_EXTRA) -agit_version=$(MVGIT_VERSION) -o $@+ $< && \
+	mv $@+ $@
 
 %.1 %.5 %.7 : %.xml
 	$(QUIET_XMLTO)$(RM) $@ && \
