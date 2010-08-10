@@ -707,6 +707,17 @@ class Branch(Ref):
 
 
     @cached_property
+    def changeids_with_commits(self):
+	'''
+	Return a list of (changeid, commit) tuples of added commits
+
+	Commits are those added to this branch since the limb's merge
+	base to those commits
+	'''
+	return [(x.changeid, x) for x in self.commits]
+
+
+    @cached_property
     def changeid_to_commit(self):
 	'''
 	Return a mapping (dict) of each added changeid to its commit
@@ -714,7 +725,18 @@ class Branch(Ref):
 	Commits are those added to this branch since the limb's merge
 	base to those commits
 	'''
-	return dict([(x.changeid, x) for x in self.commits])
+	return dict(self.changeids_with_commits)
+
+
+    @cached_property
+    def first_parent_changeids_with_commits(self):
+	'''
+	Return a list of (changeid, commit) tuples of added commits
+
+	Commits are those added to this branch since the limb's merge
+	base to those commits
+	'''
+	return [(x.changeid, x) for x in self.first_parent_commits]
 
 
     @cached_property
@@ -725,7 +747,7 @@ class Branch(Ref):
 	Commits are those added to this branch since the limb's merge
 	base to those commits
 	'''
-	return dict([(x.changeid, x) for x in self.first_parent_commits])
+	return dict(self.first_parent_changeids_with_commits)
 
 
     @property
@@ -971,7 +993,6 @@ class Branch(Ref):
 	    changeid = commit.changeid
 	    bc_list = self.from_branches_and_commits(changeid, new)
 	    for from_branch, from_commit in bc_list:
-		    from_commit = from_branch.changeid_to_commit[changeid]
 		    from_commits.append(from_commit)
 		    from_branches.append(from_branch)
 
@@ -1472,14 +1493,17 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
     are in right, but not in left.
     """
 
-    left_dict = dict(left.changeid_to_commit)
-    right_dict = dict(right.changeid_to_commit)
+    left_changes_with_commits = left.first_parent_changeids_with_commits
+    right_changes_with_commits = right.first_parent_changeids_with_commits
+    left_dict = left.first_parent_changeid_to_commit
+    right_dict = right.first_parent_changeid_to_commit
 
     if not with_rejects:
 	for id in right.rejected_changes:
 	    right_dict[id] = None
 
-    left_commits = [left_dict[x] for x in left_dict if x not in right_dict]
+    left_ids = [x[0] for x in left_changes_with_commits]
+    left_commits = [left_dict[x] for x in left_ids if x not in right_dict]
 
     if not symmetric:
 	return left_commits
@@ -1488,7 +1512,8 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
 	for id in left.rejected_changes:
 	    left_dict[id] = None
 
-    right_commits = [right_dict[x] for x in right_dict if x not in left_dict]
+    right_ids = [x[0] for x in right_changes_with_commits]
+    right_commits = [right_dict[x] for x in right_ids if x not in left_dict]
 
     return (left_commits, right_commits)
 
