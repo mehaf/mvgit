@@ -943,7 +943,6 @@ class Branch(Ref):
 
     def from_branches_and_commits(self, changeid, new=False):
 	from_branches_dict = {}
-	from_commits_dict = {}
 	from_branches_and_commits = []
 
 	for branch in self.providers:
@@ -958,17 +957,13 @@ class Branch(Ref):
 			    from_branch = from_branch.newbranch
 		    if from_branch in from_branches_dict:
 			continue
-		    if from_commit in from_commits_dict:
-			continue
-		    from_commits_dict[from_commit] = True
+		    from_branches_dict[from_branch] = True
 		    from_branches_and_commits.append((from_branch, from_commit))
 
 		if branch in from_branches_dict:
 		    continue
+		from_branches_dict[branch] = True
 		commit = branch.changeid_to_commit[changeid]
-		if commit in from_commits_dict:
-		    continue
-		from_commits_dict[commit] = True
 		from_branches_and_commits.append((branch, commit))
 
 	return from_branches_and_commits
