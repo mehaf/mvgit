@@ -30,6 +30,10 @@ These [options] are passed directly to 'git push':
 
 --dry-run, --tags, -f, --force, --thin, --no-thin
 
+SEE ALSO
+--------
+linkgit:git-push[1]
+
 Author
 ------
 Command written by Dale Farnsworth <dfarnsworth@mvista.com>

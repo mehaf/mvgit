@@ -39,6 +39,10 @@ These [options] are passed directly to "git rebase":
 
 --verbose, --whitespace=<nowarn|warn|error|error-all|strip>, --preserve-merges
 
+SEE ALSO
+--------
+linkgit:git-rebase[1]
+
 Author
 ------
 Command written by Dale Farnsworth <dfarnsworth@mvista.com>

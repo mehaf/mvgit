@@ -44,6 +44,10 @@ These options are passed directly to "git log":
 Note that "..." may also be used as a separator instead of ".." to
 commits that are in either limb, but not in the other limb.
 
+SEE ALSO
+--------
+linkgit:git-log[1]
+
 Author
 ------
 Command written by Dale Farnsworth <dfarnsworth@mvista.com>

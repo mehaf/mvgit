@@ -53,6 +53,9 @@ also be deleted.
 The contents of <limb>'s branch dependencies file is output, or the
 current limb if <limb> isn't specified.
 
+SEE ALSO
+--------
+linkgit:git-branch[1]
 
 Author
 ------

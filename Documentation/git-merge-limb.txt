@@ -29,6 +29,10 @@ git merge [opts] <remote>/branch_name <current_limb>/branch_name.
 These [options] are passed directly to "git merge":
 --stat, --no-stat, --log, --no-log, -s, --strategy=
 
+SEE ALSO
+--------
+linkgit:git-merge[1]
+
 Author
 ------
 Command written by Dale Farnsworth <dfarnsworth@mvista.com>

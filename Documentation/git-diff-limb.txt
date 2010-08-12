@@ -29,6 +29,10 @@ These options are passed directly to "git diff":
 --check, --full-index, --binary, -B, -M, -C, --find-copies-harder, -R,
 -b, -w, --ext-diff, --no-ext-diff
 
+SEE ALSO
+--------
+linkgit:git-diff[1]
+
 Author
 ------
 Command written by Dale Farnsworth <dfarnsworth@mvista.com>

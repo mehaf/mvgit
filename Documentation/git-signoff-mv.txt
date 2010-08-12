@@ -92,7 +92,7 @@ $ git checkout -b 27290_v01 f2.6.24/bugfixes/27290_v01 (1)
 $ git signoff-mv --ack f2.6.24/dev.. (2)
 ------------
 
-1. Checkoout out a local tracking branch for the remote bugfixes/27290_v01 
+1. Checkout out a local tracking branch for the remote bugfixes/27290_v01 
    based on the f2.6.24 remote repository.
 
 2. Tell 'git signoff-mv' to add an "Acked-by:" line to each commit that
