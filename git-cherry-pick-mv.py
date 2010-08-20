@@ -144,10 +144,6 @@ def process_options():
 	if noargs:
 	    usage()
 
-    if not config["edit"] and config["bugz"] == None:
-	sys.stdout.write("Either of --edit or --bugz options is required")
-	sys.exit(1)
-
     config["commits"] = args
 
 
@@ -345,6 +341,10 @@ def initialize_commits():
     type = config["type"]
     disposition = config["disposition"]
 
+    if not edit and bugz == None:
+	sys.stdout.write("Either of --edit or --bugz options is required")
+	sys.exit(1)
+
     if not commits:
 	commits = [x.strip() for x in sys.stdin.readlines()]
 
@@ -445,9 +445,12 @@ def do_commit(commit):
 	commit_options += ['--type', config['type']]
     if config['disposition']:
 	commit_options += ['--disposition', config['disposition']]
+    if git.mvl6_kernel_repo():
+	commit_options += ['--changeid', commit]
+
     edit = config["edit"]
 
-    cmd = ["git", "commit-mv", '--changeid', commit] + commit_options
+    cmd = ["git", "commit-mv"] + commit_options
     if edit:
 	cmd += ['-c', commit]
     else:

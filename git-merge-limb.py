@@ -153,6 +153,8 @@ def main():
 
     try:
         git.check_repository()
+	git.require_mvl6_kernel_repo()
+
         merge_limb()
 
     except git.GitError, e:

@@ -201,6 +201,8 @@ def main():
 
     try:
 	git.check_repository()
+	git.require_mvl6_kernel_repo()
+
 	push_limb()
 
     except git.GitError, e:

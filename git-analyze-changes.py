@@ -607,6 +607,8 @@ def main():
     process_options()
 
     try:
+	git.check_repository()
+	git.require_mvl6_kernel_repo()
 	do_analyze()
 
     except git.GitError, e:

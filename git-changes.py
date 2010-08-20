@@ -287,9 +287,9 @@ def git_dependent_branches():
 def main():
     process_options()
 
-
     try:
 	git.check_repository()
+	git.require_mvl6_kernel_repo()
 
 	if config["dependents"]:
 	    git_dependent_branches()

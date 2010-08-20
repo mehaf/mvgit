@@ -253,9 +253,10 @@ def provenance():
 def main():
     process_options()
 
-
     try:
 	git.check_repository()
+	git.require_mvl6_kernel_repo()
+
 	provenance()
 
     except git.GitError, e:

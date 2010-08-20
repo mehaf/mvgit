@@ -119,7 +119,12 @@ do_commit_mv() {
 	#
 	#    See http://ubuntuforums.org/showpost.php?s=e3faa04fdc192707fe0064b043ca570c&p=4187899&postcount=2
 	#
-	echo $mv_commit_cmd --changeid $(git rev-list --no-walk $revision) $c_opt $revision -a > /tmp/bulk-cherry-mv-args.$$
+	changeid_arg=
+	if [ $(git config mvista.repo-type) = 'mvl6-kernel' ]; then
+		changeid_arg="--changeid $(git rev-list --no-walk $revision)"
+	fi
+
+	echo $mv_commit_cmd $changeid_arg $c_opt $revision -a > /tmp/bulk-cherry-mv-args.$$
 	xargs -a /tmp/bulk-cherry-mv-args.$$ git commit-mv
 	rm /tmp/bulk-cherry-mv-args.$$
 }

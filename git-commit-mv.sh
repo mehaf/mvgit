@@ -22,6 +22,12 @@
 SUBDIRECTORY_OK=Yes
 OPTIONS_SPEC=
 . $(git --exec-path)/git-sh-setup
+
+mvl6_kernel_repo=
+if [ "$(git config mvista.repo-type)" = mvl6-kernel ]; then
+	mvl6_kernel_repo=True
+fi
+
 require_work_tree
 cd_to_toplevel
 
@@ -222,7 +228,7 @@ if has_MV_header; then
 			sed -i -e "1,/^$/{1,/^Description:/{/^MR:/s/.*/MR: $orig_MR, $bugz_arg/}}" $bodyfile
 		fi
 	fi
-else
+elif [ -n "$mvl6_kernel_repo" ]; then
 	cat <<EOF >> /tmp/git-commit-mv-msg.$$
 $blanknote
 Source: $source
@@ -230,6 +236,15 @@ MR: $bugz
 Type: $type
 Disposition: $disposition
 ChangeID: $changeid
+Description:
+EOF
+else
+	cat <<EOF >> /tmp/git-commit-mv-msg.$$
+$blanknote
+Source: $source
+MR: $bugz
+Type: $type
+Disposition: $disposition
 Description:
 EOF
 fi
@@ -257,7 +272,7 @@ then
 	echo "$signed_off_line" >> /tmp/git-commit-mv-msg.$$
 fi
 
-if [[ -z $changeid ]]
+if [[ -n "$mvl6_kernel_repo" ]] && [[ -z $changeid ]]
 then
 	# generate a change ID based on several things related to
 	# what's being committed.

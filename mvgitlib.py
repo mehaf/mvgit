@@ -1610,3 +1610,55 @@ def remote_alias():
     roffset = len('.url')
     cached_remote_alias = name[loffset:-roffset]
     return cached_remote_alias
+
+
+cached_repo_type = None
+
+def repo_type():
+    global cached_repo_type
+    if cached_repo_type:
+	return cached_repo_type
+
+    cmd = ['git', 'config', 'mvista.repo-type']
+    cached_repo_type = call(cmd, error=None, stderr=None).strip()
+    if cached_repo_type:
+	return cached_repo_type
+
+    for case in (1, 2, 3):
+	if case == 1:
+	    cmd = ['git', 'config', 'remote.origin.url']
+	    remote_url = call(cmd, error=None, stderr=None).strip()
+	    if '/git/kernel/mvlinux.git' in remote_url:
+		cached_repo_type = 'mvl6-kernel'
+		break
+	elif case == 2:
+	    cmd = ['git', 'branch', '-r']
+	    for branch_name in call(cmd, error=None, stderr=None).splitlines():
+		if 'mvl-2.6.' in branch_name and '/limb-info' in branch_name:
+		    cached_repo_type = 'mvl6-kernel'
+		    break
+	    else:
+		continue
+	    break
+	elif case == 3:
+	    cached_repo_type = 'non-mvl6-kernel'
+	    break
+
+    cmd = ['git', 'config', 'mvista.repo-type', cached_repo_type]
+    call(cmd, error=None, stderr=None).strip()
+
+    return cached_repo_type
+
+
+def mvl6_kernel_repo():
+    return repo_type() == 'mvl6-kernel'
+
+
+def require_mvl6_kernel_repo():
+    if repo_type() != 'mvl6-kernel':
+	sys.stderr.write("""
+This command is intended only for use in MVL6 (and later) kernel repositories.
+You may annotate an MVL6 repository as such by running:
+	git config mvista.repo-type mvl6-kernel
+""")
+	sys.exit(1)
