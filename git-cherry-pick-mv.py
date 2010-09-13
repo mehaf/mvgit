@@ -146,6 +146,9 @@ def process_options():
 
     config["commits"] = args
 
+    if not config["nosignoff"]:
+	config["cherry_options"].append("-s")
+
 
 def save_state():
     statefilename = config["gitdir"] + "/.dotest/cherry-pick-mv.state"
@@ -211,7 +214,6 @@ def do_continue_or_skip():
 	os.remove(merge_msg_filename)
 
     commits = config["commits"]
-    nosignoff = config["nosignoff"]
     commits_done = config["commits_done"]
 
     cmd = ['git', 'log', '--oneline', '-1', commits[commits_done]]
@@ -225,6 +227,7 @@ def do_continue_or_skip():
 	sys.stdout.write("Skipping %s\n" % oneline)
     commits_done += 1
     config["commits_done"] = commits_done
+    save_state()
 
 
 def select_merge_commits(commits):
@@ -246,7 +249,8 @@ def check_clean_state():
 	sys.stdout.write("Previous dotest directory %s still exists.\n" %
 		dotest)
 	sys.stdout.write("Try git cherry-pick-mv [ --continue | --abort ]\n")
-	sys.stdout.write('If all else fails, you an try "rm -rf %s"\n' % dotest)
+	sys.stdout.write('If all else fails, you can try "rm -rf %s"\n' %
+				dotest)
 	sys.stdout.write("and try again.\n")
 	sys.exit(1)
     else:
@@ -402,13 +406,9 @@ def initialize_commits():
 def do_cherry_pick(commit):
     cherry_options = config["cherry_options"]
     merge_commits = config["merge_commits"]
-    nosignoff = config["nosignoff"]
 
     if commit in merge_commits:
-	cherry_options += ["-m", "1"]
-
-    if not nosignoff:
-	cherry_options.append('-s')
+	cherry_options = cherry_options + ["-m", "1"]
 
     sys.stdout.write("Pick ")
     cmd = ['git', '--no-pager', 'log', '-1', '--oneline', commit]
@@ -435,6 +435,17 @@ def do_cherry_pick(commit):
 	sys.exit(rc)
 
 
+def changes_added_to_index():
+    cmd = ["git", "diff", "--quiet", "--cached"]
+    rc = subprocess.call(cmd)
+    return rc != 0
+
+
+def abbrev(commit):
+    cmd = ['git', '--no-pager', 'rev-list', '-1', '--abbrev-commit', commit]
+    return git.call(cmd).rstrip()
+
+
 def do_commit(commit):
     commit_options = []
     if config['source']:
@@ -448,30 +459,37 @@ def do_commit(commit):
     if git.mvl6_kernel_repo():
 	commit_options += ['--changeid', commit]
 
+    cmd = ["git", "commit-mv"] + commit_options
     edit = config["edit"]
 
-    cmd = ["git", "commit-mv"] + commit_options
     if edit:
+	if not changes_added_to_index():
+	    sys.stdout.write("Skipping %s - No additional changes to pick.\n\n"
+			     % abbrev(commit))
+	    config["skipped_commits"].append(commit)
+	    return
+
 	cmd += ['-c', commit]
+	p = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+	output = ""
     else:
 	cmd += ['--no-edit', '-C', commit]
+	p = subprocess.Popen(cmd, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	output = p.stdout.read()
 
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = p.stdout.read()
     errmsg = p.stderr.read()
     rc = p.wait()
     if 'nothing added to commit' in output or 'nothing to commit' in output:
-	cmd = ['git', '--no-pager', 'rev-list', '-1', '--abbrev-commit', commit]
-	abbrev = git.call(cmd).rstrip()
 	sys.stdout.write("Skipping %s - No additional changes to pick.\n\n"
-			 % abbrev)
+			    % abbrev(commit))
 	config["skipped_commits"].append(commit)
     else:
 	lines = output.splitlines()
-	if (len(lines) != 3 or not lines[0].startswith('[detached HEAD ') or
-				not lines[1].startswith(' Author: ') or
-				not 'files changed' in lines[2]):
-	    sys.stdout.write(output)
+	for line in lines:
+	    if (not line.startswith('[detached HEAD ') and
+		    not line.startswith(' Author: ') and
+		    not 'files changed' in line):
+		sys.stdout.write(line)
     if errmsg:
 	sys.stderr.write(errmsg)
 
@@ -504,8 +522,12 @@ def cherry_pick_mv():
 	save_state()
 
     if config["skipped_commits"]:
-	sys.stderr.write("The following %d commits were skipped:\n" %
-			len(config["skipped_commits"]))
+	count = len(config["skipped_commits"])
+	if count == 1:
+	    str = "commit was"
+	else:
+	    str = "%d commits were" % count
+	sys.stderr.write("The following %s skipped:\n" % str)
 	for commit in config["skipped_commits"]:
 	    cmd = ['git', '--no-pager', 'log', '-1', '--oneline', commit]
 	    oneline = git.call(cmd).rstrip()
