@@ -615,12 +615,11 @@ def main():
 	sys.stderr.write("\nError: %s\n" % e.msg)
 	sys.stderr.write("Exiting.\n")
 
-	if config["debug"]:
+	if debug:
 	    sys.stdout.write("\n")
 	    raise
 
 	sys.exit(1)
-
 
     if error_exit:
 	sys.exit(1)
