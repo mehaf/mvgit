@@ -191,6 +191,7 @@ def write_commit(file, commit, change, branch):
     file.write('\n')
 
     if patch:
+	file.write('---\n')
 	commit.write_patch(file)
 	file.write('\n')
 
