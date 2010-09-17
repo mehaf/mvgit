@@ -12,6 +12,8 @@ Usage: git-cherry-pick-mv [opts] <commit>...
 	--no-signoff
 		By default, a signoff-line is added to the commit message.
 		This option causes a signoff-line not to be added.
+	-n | --no-commit
+		Perform the cherry-pick(s), but don't commit them.
 	--stdin
 		Take commit list from stdin instead of the command line.
 	--source <source>
@@ -51,6 +53,7 @@ config = {
     "continue"		: False,
     "skip"		: False,
     "abort"		: False,
+    "nocommit"		: False,
     "cherry_options"	: [],
     "source"		: None,
     "bugz"		: None,
@@ -75,11 +78,12 @@ def usage(msg=None):
 
 
 def process_options():
-    short_opts = "emx"
+    short_opts = "emnx"
     long_opts = [
 	"help", "debug", "version", "edit",
 	"ff", "continue", "skip", "abort", "stdin",
-	"source=", "bugz=", "type=", "disposition="
+	"source=", "bugz=", "type=", "disposition=",
+	"no-commit",
     ]
 
     noargs = False
@@ -128,6 +132,8 @@ def process_options():
 	    config['disposition'] = value
 	elif option == '-m':
 	    config["merges_ok"] = True
+	elif option in ('-n', '--no-commit'):
+	    config['nocommit'] = True
 	elif value:
 	    if option.startswith("--"):
 		config["cherry_options"] += [option, value]
@@ -178,8 +184,9 @@ def restore_state():
 
 def checkout_original_branch():
     if config["orig_branchname"] != 'detached HEAD':
-	cmd = ["git", "reset", "--hard"]
-	git.call(cmd)
+	if not config["nocommit"]:
+	    cmd = ["git", "reset", "--hard"]
+	    git.call(cmd)
 	prefix_len = len('refs/heads/')
 	cmd = ["git", "checkout", config["orig_branchname"][prefix_len:]]
 	p = subprocess.Popen(cmd, stderr=subprocess.PIPE)
@@ -474,10 +481,18 @@ def do_commit(commit):
 	    config["skipped_commits"].append(commit)
 	    return
 
+	if config['nocommit']:
+	    sys.stdout.write('Not committing changes in %s\n' % abbrev(commit))
+	    return
+
 	cmd += ['-c', commit]
 	p = subprocess.Popen(cmd, stderr=subprocess.PIPE)
 	output = ""
     else:
+	if config['nocommit']:
+	    sys.stdout.write('Not committing changes in %s\n' % abbrev(commit))
+	    return
+
 	cmd += ['--no-edit', '-C', commit]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	output = p.stdout.read()
