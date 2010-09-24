@@ -462,7 +462,7 @@ class Limb(object):
 	tokens.append('%s UTC' % time.asctime(time.gmtime()))
 	tokens.append(' {')
 	first_branch = True
-	self.repository_branches
+	self.repository_branches		# fully populate self.branches
 	for branch in self.branches:
 		if first_branch:
 		    first_branch = False
@@ -1606,7 +1606,8 @@ def remote_alias():
 	line = mvlinux_lines[0]
     else:
 	sys.stderr.write(
-	    '\nError: Cannot determine the remote alias (typically "origin").\n'
+	    '\nError: Cannot automatically determine the remote alias '
+	    '(typically "origin").\n'
 	    'Set the alias via '
 	    '"git config --add mvista.remote-alias <alias>".\n')
 	sys.exit(1)
