@@ -1147,6 +1147,10 @@ class Commit(object):
 		    errors.append('multiple instances of "%s"\n' % key)
 		else:
 		    dict[lkey] = value
+		    if (lkey == 'source' and 'URL | Some Guy' in value or
+			    lkey == 'disposition' and
+				'Submitted to | Needs submi' in value):
+			errors.append('Bad MV header value: "%s"\n' % line)
 	    else:
 		errors.append('Bad MV header value: "%s"\n' % line)
 
@@ -1154,7 +1158,7 @@ class Commit(object):
 	    for key in self.mv_header_fields.keys():
 		lkey = key.lower().rstrip(':')
 		if lkey not in dict:
-		    errors.append('missing "%s" field\n' % key)
+		    errors.append('missing "%s" MV header line\n' % key)
 
 	return errors
 
