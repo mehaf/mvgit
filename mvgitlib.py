@@ -57,7 +57,9 @@ class User(object):
     '''
 
     def __init__(self):
-	self.name = pwd.getpwuid(os.getuid()).pw_name
+	pwent = pwd.getpwuid(os.getuid())
+	self.name = pwent.pw_name
+	self.real_name = pwent.pw_gecos.split(',', 2)[0]
 	gids = os.getgroups()
 	gid = os.getgid()
 	if gid not in gids:
