@@ -544,11 +544,11 @@ class Ref(object):
 
 
     @classmethod
-    def get(cls, name, id=None):
+    def get(cls, name, id=None, new=False):
 	'''
 	Find a Ref by name if the ref exists, otherwise return a new Ref
 	'''
-	return cls.find(name) or cls(name, id)
+	return cls.find(name) or cls(name, id, new=new)
 
 
     @cached_property
@@ -609,8 +609,9 @@ class Branch(Ref):
 	limb_name = match.group('limb_name')
 	if limb_name:
 	    limb = Limb.get(limb_name)
-	    limb.branches.append(self)
 	    self.limb = limb
+	    if not self.new:
+		limb.branches.append(self)
 	else:
 	    self.limb = None
 
