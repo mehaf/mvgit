@@ -605,9 +605,9 @@ def main():
     '''
 
     set_global_constants()
-    process_options()
 
     try:
+	process_options()
 	git.check_repository()
 	git.require_mvl6_kernel_repo()
 	do_analyze()
