@@ -216,15 +216,17 @@ def do_continue_or_skip():
     commits = config["commits"]
     commits_done = config["commits_done"]
 
-    cmd = ['git', 'log', '--oneline', '-1', commits[commits_done]]
+    commit = commits[commits_done]
+    cmd = ['git', 'log', '--oneline', '-1', commit]
     oneline = git.call(cmd).strip()
     if config["continue"]:
 	sys.stdout.write("Continuing %s\n" % oneline)
-	do_commit(commits[commits_done])
+	do_commit(commit)
     else:
 	cmd = ['git', 'reset', '--hard', 'HEAD']
 	git.call(cmd, stdout=None)
 	sys.stdout.write("Skipping %s\n" % oneline)
+	config["skipped_commits"].append(commit)
     commits_done += 1
     config["commits_done"] = commits_done
     save_state()
@@ -483,10 +485,12 @@ def do_commit(commit):
     errmsg = p.stderr.read()
     rc = p.wait()
     if 'nothing added to commit' in output or 'nothing to commit' in output:
+	skipped = True
 	sys.stdout.write("Skipping %s - No additional changes to pick.\n\n"
 			    % abbrev(commit))
 	config["skipped_commits"].append(commit)
     else:
+	skipped = False
 	lines = output.splitlines()
 	for line in lines:
 	    if (not line.startswith('[detached HEAD ') and
@@ -495,8 +499,9 @@ def do_commit(commit):
 		sys.stdout.write(line)
     if errmsg:
 	sys.stderr.write(errmsg)
+	sys.exit(rc)
 
-    if rc != 0:
+    if rc != 0 and not skipped:
 	sys.exit(rc)
 
 
@@ -524,17 +529,18 @@ def cherry_pick_mv():
 
 	save_state()
 
-    if config["skipped_commits"]:
-	count = len(config["skipped_commits"])
-	if count == 1:
-	    str = "commit was"
-	else:
-	    str = "%d commits were" % count
-	sys.stderr.write("The following %s skipped:\n" % str)
-	for commit in config["skipped_commits"]:
-	    cmd = ['git', '--no-pager', 'log', '-1', '--oneline', commit]
-	    oneline = git.call(cmd).rstrip()
-	    sys.stderr.write("    %s\n" % oneline)
+    if len(commits) > 1:
+	if config["skipped_commits"]:
+	    count = len(config["skipped_commits"])
+	    if count == 1:
+		str = "commit was"
+	    else:
+		str = "%d commits were" % count
+	    sys.stderr.write("The following %s skipped:\n" % str)
+	    for commit in config["skipped_commits"]:
+		cmd = ['git', '--no-pager', 'log', '-1', '--oneline', commit]
+		oneline = git.call(cmd).rstrip()
+		sys.stderr.write("    %s\n" % oneline)
 
     move_commits_to_original_branch()
     checkout_original_branch()
