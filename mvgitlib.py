@@ -456,28 +456,22 @@ class Limb(object):
 	return self.branch_status_dict['unchanged']
 
 
-    def push_log(self):
+    def write_push_log_entry(self, file):
 	zero_id = '0' * 40
 	tokens = []
-	tokens.append('%s UTC' % time.asctime(time.gmtime()))
-	tokens.append(' {')
-	first_branch = True
+	tokens.append('%s UTC\n' % time.asctime(time.gmtime()))
 	self.repository_branches		# fully populate self.branches
-	for branch in self.branches:
-		if first_branch:
-		    first_branch = False
-		else:
-		    tokens.append(', ')
+	for branch in sorted(self.branches, key=lambda x: x.subname):
 		tokens.append(branch.subname)
-		tokens.append(': (')
+		tokens.append(' ')
 		tokens.append(branch.id or zero_id)
-		tokens.append(', ')
 		if hasattr(branch, 'newbranch'):
+		    tokens.append(' ')
 		    tokens.append(branch.newbranch.id or zero_id)
-		tokens.append(')')
-	tokens.append('}')
+		tokens.append('\n')
 
-	return ''.join(tokens)
+	tokens.append('\n')
+	file.write(''.join(tokens))
 
 
     def exists(self):

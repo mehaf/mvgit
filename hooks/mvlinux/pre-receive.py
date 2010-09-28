@@ -225,7 +225,7 @@ def pre_receive(tags, branches):
 	if not os.path.isdir(dirname):
 	    os.makedirs(dirname)
 	file = open(filename, 'a')
-	file.write('%s\n\n' % limb.push_log())
+	limb.write_push_log_entry(file)
 
 
 def notice(msg):
