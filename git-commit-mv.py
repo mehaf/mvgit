@@ -326,7 +326,8 @@ def commit_mv():
     commit_options = opt["commit_options"]
 
     if message_commit and not reset_author:
-	cmd = ['git', 'log', '-1', '--pretty=format:%an\n%ae\n%ai']
+	cmd = ['git', 'log', '-1', '--pretty=format:%an\n%ae\n%ai',
+		message_commit.id]
 	a_name, a_email, a_date = git.call(cmd).splitlines()
 	os.environ["GIT_AUTHOR_NAME"] = a_name
 	os.environ["GIT_AUTHOR_EMAIL"] = a_email
