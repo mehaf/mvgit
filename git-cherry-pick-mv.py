@@ -243,7 +243,7 @@ def select_merge_commits(commits):
     return merge_commits
 
 
-def check_clean_state():
+def create_state_directory():
     dotest = config["gitdir"] + "/.dotest"
     if os.path.isdir(dotest):
 	sys.stdout.write("Previous dotest directory %s still exists.\n" %
@@ -256,6 +256,8 @@ def check_clean_state():
     else:
 	os.makedirs(dotest)
 
+
+def check_clean_state():
     cmd = ['git', 'update-index', '--refresh']
     try:
 	git.call(cmd)
@@ -397,6 +399,7 @@ def initialize_commits():
     if not edit and not (source and bugz and type and disposition):
 	check_mv_headers(commits)
 
+    create_state_directory()
     move_to_detached_head()
 
     config["commits_done"] = 0
