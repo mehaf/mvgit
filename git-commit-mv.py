@@ -246,6 +246,7 @@ def commit_message():
     type = "Defect Fix | Security Fix | Enhancement | Integration"
     disposition = ("Submitted to | Needs submitting to | Merged from |"
 		    " Accepted by | Rejected by | Backport from | Local")
+    changeid = None
     body = []
 
     if message_commit:
@@ -265,6 +266,8 @@ def commit_message():
 	    type = mv_header_dict['type']
 	if 'disposition' in mv_header_dict:
 	    disposition = mv_header_dict['disposition']
+	if 'changeid' in mv_header_dict:
+	    changeid = mv_header_dict['changeid']
 
     if opt["source"]:
     	source = opt["source"]
@@ -299,11 +302,16 @@ Disposition: %s
 """ % (subject, source, bugz, type, disposition)
 
     body = '\n'.join(body) + '\n'
-    if opt['repo-type'] == 'mvl6-kernel' and not opt["delete_changeid"]:
+
+    if opt["delete_changeid"]:
+	changeid = None
+    elif opt['repo-type'] == 'mvl6-kernel':
 	if opt["changeid"]:
 	    changeid = opt["changeid"]
-	else:
+	elif not changeid:
 	    changeid = generate_changeid(header, body)
+
+    if changeid:
 	header += "ChangeID: %s\n" % changeid
 
     if not body.startswith("Description:\n"):
