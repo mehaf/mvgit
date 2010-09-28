@@ -60,7 +60,7 @@ that has stopped in the middle due to need for programmer intervention.
 --edit::
 	Edit each commit message.
 
---bugz <bugno>::
+--bugz <bugno>, --mr <bugno>::
 	Fill in the "MR:" field of the MontaVista commit header with <bugno>.
 
 --source <string>::

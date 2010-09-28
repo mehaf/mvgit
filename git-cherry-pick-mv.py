@@ -82,7 +82,7 @@ def process_options():
     long_opts = [
 	"help", "debug", "version", "edit",
 	"ff", "continue", "skip", "abort", "stdin",
-	"source=", "bugz=", "type=", "disposition=",
+	"source=", "bugz=", "mr=", "type=", "disposition=",
 	"no-commit",
     ]
 
@@ -124,7 +124,7 @@ def process_options():
 	    config["edit"] = True
 	elif option == '--source':
 	    config['source'] = value
-	elif option == '--bugz':
+	elif option in ('--bugz', '--mr'):
 	    config['bugz'] = value
 	elif option == '--type':
 	    config['type'] = value
