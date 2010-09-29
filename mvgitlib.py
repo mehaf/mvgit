@@ -119,14 +119,18 @@ class Limb(object):
 
 
     @classmethod
-    def get(cls, name):
+    def get(cls, name, newname=None):
 	'''
 	Find an existing limb with the name, or create a new Limb
 	'''
 	if name in cls.limb_dict:
-	    return cls.limb_dict[name]
+	    limb = cls.limb_dict[name]
+	    if newname:
+		raise GitError("Pre-existing %s:%s, but newname specified" %
+		    (cls, name))
+	    return limb
 	else:
-	    return Limb(name)
+	    return Limb(name, newname)
 
 
     @cached_property
@@ -390,13 +394,13 @@ class Limb(object):
 		subname = newbranch.subname
 		if subname not in subnames:
 		    branchname = os.path.join(self.name, subname)
-		    branches.append(Branch(branchname, Branch.zero_id))
+		    branches.append(Branch.get(branchname, Branch.zero_id))
 
 	    for branch in branches:
 		subname = branch.subname
 		newbranchname = os.path.join(newlimb.name, subname)
 		if subname not in newsubnames:
-		    Branch(newbranchname, Branch.zero_id)
+		    Branch.get(newbranchname, Branch.zero_id)
 		branch.newbranch = Branch.find(newbranchname)
 
 	unchanged = []
@@ -538,11 +542,24 @@ class Ref(object):
 
 
     @classmethod
-    def get(cls, name, id=None, new=False):
+    def get(cls, name, id=None, new_id=None, new=False):
 	'''
 	Find a Ref by name if the ref exists, otherwise return a new Ref
 	'''
-	return cls.find(name) or cls(name, id, new=new)
+	if id == cls.zero_id:
+	    id = None
+	ref = cls.find(name)
+	if ref:
+	    if id and ref.id != id:
+		raise GitError("Pre-existing %s:%s with different id" %
+		    (cls, name))
+	    if new_id:
+		raise GitError("Pre-existing %s:%s, but new_id specified" %
+		    (cls, name))
+
+	    return ref
+
+	return cls(name, id, new_id, new)
 
 
     @cached_property
@@ -1037,12 +1054,9 @@ class Commit(object):
     commit_dict = {}
 
 
-    def __init__(self, id, header, subject, body):
+    def __init__(self, id):
 	self.id = id
 	self.commit_dict[id] = self
-	self.header = header
-	self.subject = subject
-	self.body = body
 	self.from_branches = []
 	self.from_commits = []
 
@@ -1407,7 +1421,10 @@ def read_commits(tip, ancestor_id, first_parent=False, with_filenames=False):
 	    if id in Commit.commit_dict:
 		commit = Commit.commit_dict[id]
 	    else:
-		commit = Commit(id, header, subject, body)
+		commit = Commit(id)
+		commit.header = header
+		commit.subject = subject
+		commit.body = body
 	    if with_filenames:
 		commit.filenames = filenames
 	else:
