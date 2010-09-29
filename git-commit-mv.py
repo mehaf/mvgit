@@ -275,7 +275,9 @@ def commit_message():
 	if bugz.startswith('Bugzilla'):
 	    bugz = opt["bugz"]
 	else:
-	    bugz = bugz.split(',', 2)[0].strip() + ", " + opt["bugz"]
+	    bugz = bugz.split(',', 2)[0].strip()
+	    if bugz != opt["bugz"]:
+		bugz += ", " + opt["bugz"]
     if opt["type"]:
 	type = opt["type"]
     if opt["disposition"]:
