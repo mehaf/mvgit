@@ -469,7 +469,7 @@ def do_commit(commit):
     if config['disposition']:
 	commit_options += ['--disposition', config['disposition']]
     if git.mvl6_kernel_repo():
-	commit_options += ['--changeid', commit]
+	commit_options += ['--changeid', git.read_commit(commit).changeid]
 
     cmd = ["git", "commit-mv"] + commit_options
     edit = config["edit"]
