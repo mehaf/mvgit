@@ -113,6 +113,9 @@ def process_options():
 	arg0 = ''
 	match = None
 
+    if not remote_alias:
+	remote_alias = git.remote_alias()
+
     if match:
 	limb1_name, separator, limb2_name = match.groups()
 	if not limb1_name:
@@ -125,8 +128,6 @@ def process_options():
 	    limb2_name = git.current_limb().name
 
 	limb1_name = limb2_name
-	if not remote_alias:
-	    remote_alias = git.remote_alias()
 	remote_prefix = '%s/' % remote_alias
 	if limb1_name.startswith('/'):
 	    limb1_name = limb1_name[1:]
@@ -282,6 +283,9 @@ def summarize_commits(branches, action):
 
     for branch in branches:
 	if branch.subname.startswith('external.'):
+	    continue
+
+	if not branch.commits_with_change:
 	    continue
 
 	errors = []
@@ -527,24 +531,32 @@ def check_msd_branch(branch):
 
 def do_analyze():
     global limb1_name
-    if '/bugfixes/' in limb1_name:
+
+    limb = None
+    if limb1_name.startswith(remote_alias + "/"):
 	limb = git.Limb(limb1_name, limb2_name)
 	deleted_branches = limb.deleted_branches
 	if deleted_branches:
-	    sys.stdout.write("The following branch(es) don't exist in %s.\n" %
-		    limb2_name)
+	    plural = len(deleted_branches) > 1
+	    sys.stdout.write("The following branch%s in %s\n" %
+			    (("es exist", " exists")[not plural], limb1_name))
+	    sys.stdout.write("but %s not exist in %s:\n" %
+			    (("do", "does")[not plural], limb2_name))
 	    for branch in deleted_branches:
-		sys.stdout.write("\t%s\n" % branch.name)
-	    sys.stdout.write("They may be removed via git push %s" %
-		    remote_alias)
-	    sys.stdout.write("For example: git push %s" % remote_alias)
+		sys.stdout.write("\t%s\n" % branch.newbranch.name)
+	    sys.stdout.write("%s may be removed from the remote server via:\n"
+				"git push %s" % (("They", "It")[not plural],
+				remote_alias))
 	    for branch in deleted_branches:
-		sys.stdout.write(" :%s" % branch.name)
-	    sys.stdout.write("\n")
+		sys.stdout.write(" :%s" % branch.newbranch.name)
+	    sys.stdout.write("\n\n")
 
+    if '/bugfixes/' in limb1_name:
 	limb1_name = re.sub(r'/bugfixes/.*', '', limb1_name)
+	limb = git.Limb(limb1_name, limb2_name)
 
-    limb = git.Limb(limb1_name, limb2_name)
+    if not limb:
+	limb = git.Limb(limb1_name, limb2_name)
 
     if not limb.newlimb.repository_branches:
 	error("Limb not found: %s\n" % limb2_name)
