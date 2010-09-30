@@ -512,12 +512,12 @@ def do_commit(commit):
 		    not line.startswith(' Author: ') and
 		    not 'files changed' in line):
 		sys.stdout.write(line)
+
     if errmsg:
-	sys.stderr.write(errmsg)
-	sys.exit(rc)
+	sys.stderr.write(errmsg + "\n")
 
     if rc != 0 and not skipped:
-	sys.exit(rc)
+	sys.stderr.write("***** git-commit returned %d\n" % rc)
 
 
 def cherry_pick_mv():
