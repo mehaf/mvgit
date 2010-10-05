@@ -269,9 +269,8 @@ def create_state_directory():
 def check_clean_state():
     cmd = ['git', 'update-index', '--refresh']
     try:
-	git.call(cmd)
+	git.call(cmd, stdout=sys.stdout)
     except:
-	sys.stdout.write('"git update-index --refresh" failed\n')
 	sys.exit(1)
 
     cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD', '--']
