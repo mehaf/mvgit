@@ -119,6 +119,21 @@ def process_options():
     config["limb2"] = limb2
 
 
+def check_clean_state():
+    cmd = ['git', 'update-index', '--refresh']
+    try:
+	git.call(cmd, stdout=sys.stdout)
+    except:
+	sys.exit(1)
+
+    cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD', '--']
+    msg = git.call(cmd)
+    if msg:
+	sys.stdout.write("Your index is not up-to-date\n")
+	sys.stdout.write(msg)
+	sys.exit(1)
+
+
 def git_list_branches():
     branch_name = git.current_branch().name
     limb_name = git.current_limb().name
@@ -140,6 +155,9 @@ def git_create_limb():
     recursive = config["recursive"]
     checkout = config["checkout"]
     checkout_name = None
+
+    if checkout:
+	check_clean_state()
 
     branch = git.Branch.get(limb1name)
     if branch.exists():
@@ -183,6 +201,8 @@ def git_create_limb():
 	current_name = None
 
     if current_name and current_name in limb1_branchnames:
+	if not checkout:
+	    check_clean_state()
 	git.call(['git', 'checkout', current.id], stdout=None, stderr=None)
 	checkout = True
 	if current.subname in limb2_subnames:
