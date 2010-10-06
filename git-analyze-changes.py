@@ -570,7 +570,7 @@ def do_analyze():
 	    ub = git.Branch.get(ub_name)
 	    if not ub.exists():
 		rub = ub.remote_branch
-		if not_rub.exists():
+		if not rub.exists():
 		    error("upstream-branch '%s' not found\n" % ub_name)
 		ub = rub
 	    upstream_branches.append(ub)
