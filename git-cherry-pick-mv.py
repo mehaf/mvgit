@@ -228,6 +228,11 @@ def do_continue_or_skip():
     oneline = git.call(cmd).strip()
     if config["continue"]:
 	sys.stdout.write("Continuing %s\n" % oneline)
+	unmerged = unmerged_files()
+	if unmerged:
+	    sys.stderr.write(unmerged)
+	    sys.stderr.write("Unmerged files.  ")
+	    output_resolve_msg_and_exit()
 	do_commit(commit)
     else:
 	cmd = ['git', 'reset', '--hard', 'HEAD']
@@ -266,19 +271,14 @@ def create_state_directory():
 	os.makedirs(dotest)
 
 
-def check_clean_state():
+def unmerged_files():
     cmd = ['git', 'update-index', '--refresh']
-    try:
-	git.call(cmd, stdout=sys.stdout)
-    except:
-	sys.exit(1)
+    return git.call(cmd, error=None)
 
+
+def changed_files():
     cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD', '--']
-    msg = git.call(cmd)
-    if msg:
-	sys.stdout.write("cannot cherry-pick: your index is not up-to-date\n")
-	sys.stdout.write(msg)
-	sys.exit(1)
+    return git.call(cmd, error=None)
 
 
 def cleanup_state():
@@ -402,7 +402,11 @@ def initialize_commits():
 	sys.exit(1)
     config["merge_commits"] = merge_commits
 
-    check_clean_state()
+    msg = unmerged_files() or changed_files()
+    if msg:
+	sys.stdout.write("cannot cherry-pick: your index is not up-to-date\n")
+	sys.stderr.write(msg)
+	sys.exit(1)
 
     if not edit and not (source and bugz and type and disposition):
 	check_mv_headers(commits)
@@ -412,6 +416,19 @@ def initialize_commits():
 
     config["commits_done"] = 0
     save_state()
+
+
+def output_resolve_msg_and_exit():
+    sys.stderr.write("After resolving the conflicts, mark the\n"
+	"corrected paths with 'git add <paths>' or 'git rm <paths>'.\n"
+	"(Do NOT commit before running 'git cherry-pick-mv --continue'.)\n"
+	"When you are ready to continue, run "
+	"'git cherry-pick-mv --continue'.\n"
+	"Or, if you would prefer to skip this patch, "
+	"run 'git cherry-pick-mv --skip'.\n"
+	"Or, to restore the original branch, "
+	"run 'git cherry-pick-mv --abort'.\n")
+    sys.exit(1)
 
 
 def do_cherry_pick(commit):
@@ -428,18 +445,14 @@ def do_cherry_pick(commit):
     p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=subprocess.PIPE)
     errmsg = p.stderr.read()
     rc = p.wait()
-    if "After resolving the conflicts" in errmsg:
-	sys.stderr.write("Automatic cherry-pick failed.  "
-	    "After resolving the conflicts, mark the\n"
-	    "corrected paths with 'git add <paths>' or 'git rm <paths>'.\n"
-	    "(Do NOT commit before running 'git cherry-pick-mv --continue'.)\n"
-	    "When you are ready to continue, run "
-	    "'git cherry-pick-mv --continue'.\n"
-	    "Or, if you would prefer to skip this patch, "
-	    "run 'git cherry-pick-mv --skip'.\n"
-	    "Or, to restore the original branch, "
-	    "run 'git cherry-pick-mv --abort'.\n")
-    elif errmsg and errmsg != 'Finished one cherry-pick.\n':
+    if errmsg == 'Finished one cherry-pick.\n':
+	return
+    elif errmsg:
+	unmerged = unmerged_files()
+	if unmerged:
+	    sys.stderr.write(unmerged)
+	    sys.stderr.write("Automatic cherry-pick failed.  ")
+	    output_resolve_msg_and_exit()
 	sys.stdout.write(errmsg)
 
     if rc != 0:
