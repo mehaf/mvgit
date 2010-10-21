@@ -518,11 +518,12 @@ def do_commit(commit):
 	config["skipped_commits"].append(commit)
     else:
 	skipped = False
-	lines = output.splitlines()
+	lines = output.splitlines(True)
 	for line in lines:
 	    if (not line.startswith('[detached HEAD ') and
 		    not line.startswith(' Author: ') and
-		    not 'files changed' in line):
+		    not 'files changed' in line and
+		    not 'create mode' in line):
 		sys.stdout.write(line)
 
     if errmsg:
