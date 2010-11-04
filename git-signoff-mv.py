@@ -43,8 +43,7 @@ config = {
     "force"		: False,
     "signoff"		: "Signed-off-by",
     "addsignoff"	: True,
-    "name"		: None,
-    "email"		: None,
+    "committer"		: None,
     "source"		: None,
     "bugz"		: None,
     "type"		: None,
@@ -80,6 +79,9 @@ def process_options():
     except getopt.GetoptError, err:
         usage(err)
 
+    name = None
+    email = None
+
     for option, value in options:
 	if option == "--help" or option == "-h":
 	    usage()
@@ -94,9 +96,9 @@ def process_options():
 	    config["signoff"] = "Nacked-by"
 	    noargs = True
 	elif option == '--name':
-	    config["name"] = value
+	    name = value
 	elif option == '--email':
-	    config["email"] = value
+	    email = value
 	elif option == '--source':
 	    config['source'] = value
 	elif option == '--bugz':
@@ -117,46 +119,29 @@ def process_options():
 
     config["revlist"] = args
 
-    error = False
+    if name and email:
+	if email[0] != '<':
+	    email = "<%s>" % email
+	committer = "%s %s" % (name, email)
+    else:
+	cmd = ['git', 'var', 'GIT_COMMITTER_IDENT']
+	ident = git.call(cmd)
+	committer = ident[0:(ident.rindex('>')+1)]
 
-    if not config["email"]:
-	config["email"] = os.environ.get("GIT_COMMITTER_EMAIL")
+	if name:
+	    email = committer[committer.index('<'):]
+	    if email[0] != '<':
+		email = "<%s>" % email
+	    committer = "%s %s" % (name, email)
+	elif email:
+	    name = committer[0:(committer.index('<')-1)]
+	    committer = "%s %s" % (name, email)
 
-    if not config["email"]:
-	cmd = ["git", "config", "--get", "user.email"]
-	config["email"] = git.call(cmd, error=None)
-
-    if not config["email"]:
-	error = True
-	sys.stdout.write("Either git config user.email, the "
-		"GIT_COMMITER_EMAIL\n"
-		"environment variable, or --email must be specified.\n")
-
-    if not config["name"]:
-	config["name"] = os.environ.get("GIT_COMMITTER_NAME")
-
-    if not config["name"]:
-	cmd = ["git", "config", "--get", "user.name"]
-	config["name"] = git.call(cmd, error=None)
-
-    if not config["name"]:
-	error = True
-	sys.stdout.write("Either git config user.name, the "
-		"GIT_COMMITER_NAME\n"
-		"environment variable, or --name must be specified.\n")
-
-    if error:
-	sys.exit(2)
+    config['committer'] = committer
 
 
 def signoff_mv():
-    name = config["name"]
-    email = config["email"]
-
-    if email[0] == '<' and email[-1] == '>':
-	email = email[1:-1]
-
-    name_email = '"%s <%s>"' % (name, email)
+    committer = '"%s"' % config['committer']
 
     for v in ("signoff", "source", "bugz", "type", "disposition", "changeid"):
 	if config[v] != None:
@@ -170,13 +155,13 @@ import re
 
 signoff = %s
 add_signoff = %s
-name_email = %s
+committer = %s
 source = %s
 bugz = %s
 type = %s
 disposition = %s
 changeid = %s
-""" % (config["signoff"], config["addsignoff"], name_email, config["source"],
+""" % (config["signoff"], config["addsignoff"], committer, config["source"],
     config["bugz"], config["type"], config["disposition"], config["changeid"]) +
 r"""
 re_source = re.compile(r"Source:\s+(.*)", re.IGNORECASE)
@@ -282,7 +267,7 @@ for i, line in enumerate(lines):
 if add_signoff:
     for line in lines:
 	m = re_signoff.match(line)
-	if m and m.group(1) == name_email:
+	if m and m.group(1) == committer:
 	    add_signoff = False
 
 if to_delete:
@@ -330,7 +315,7 @@ if not (begin.endswith("-off-by:") or
     lines.append("\n")
 
 if add_signoff:
-    lines.append("%s: %s\n" % (signoff, name_email))
+    lines.append("%s: %s\n" % (signoff, committer))
 
 sys.stdout.writelines(lines)
 

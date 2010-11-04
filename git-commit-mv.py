@@ -284,11 +284,10 @@ def commit_message():
 	disposition = opt["disposition"]
 
     if addsignoff:
-	c_name = os.environ["GIT_COMMITTER_NAME"]
-	c_email = os.environ["GIT_COMMITTER_EMAIL"]
-	if c_email[0] != '<':
-	    c_email = "<%s>" % c_email
-	signoff_line = "Signed-off-by: %s %s" % (c_name, c_email)
+	cmd = ['git', 'var', 'GIT_COMMITTER_IDENT']
+	ident = git.call(cmd)
+	ident = ident[0:(ident.rindex('>')+1)]
+	signoff_line = "Signed-off-by: " + ident
 	if signoff_line not in body:
 	    if not body or ("-by: " not in body[-1] and
 		    not body[-1].lower().startswith('cc:')):
