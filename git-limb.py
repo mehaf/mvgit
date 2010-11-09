@@ -165,6 +165,12 @@ def git_create_limb():
 		limb1name)
 	sys.exit(1)
 
+    remote = git.remote_alias()
+    if limb1name.startswith(remote + '/'):
+	sys.stdout.write('%s: Cannot create a limb beginning with "%s"\n' %
+		(limb1name, remote))
+	sys.exit(1)
+
     if limb2name:
 	branch = git.Branch.get(limb2name)
 	if branch.exists():
