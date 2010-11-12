@@ -155,7 +155,7 @@ def git_pending_commits():
 	sys.exit(1)
 
     if config["verbose"]:
-	cmd = ["git", "rev-list", "-1", "--oneline"]
+	cmd = ["git", "--no-pager", "log", "-1", "--pretty=format:%h %s\n"]
 	for commit in commits:
 	    git.call(cmd + [commit.id], stdout=sys.stdout)
     else:

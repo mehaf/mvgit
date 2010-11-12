@@ -208,7 +208,7 @@ def do_abort():
 
     cleanup_state()
     checkout_original_branch()
-    cmd = ['git', '--no-pager', 'log', '-1', '--oneline', 'HEAD']
+    cmd = ['git', '--no-pager', 'log', '-1', '--pretty=format:%h %s\n', 'HEAD']
     git.call(cmd, stdout=sys.stdout)
 
     sys.exit(0)
@@ -224,7 +224,7 @@ def do_continue_or_skip():
     commits_done = config["commits_done"]
 
     commit = commits[commits_done]
-    cmd = ['git', 'log', '--oneline', '-1', commit]
+    cmd = ['git', '--no-pager', 'log', '-1', '--pretty=format:%h %s\n', commit]
     oneline = git.call(cmd).strip()
     if config["continue"]:
 	sys.stdout.write("Continuing %s\n" % oneline)
@@ -439,7 +439,7 @@ def do_cherry_pick(commit):
 	cherry_options = cherry_options + ["-m", "1"]
 
     sys.stdout.write("Pick ")
-    cmd = ['git', '--no-pager', 'log', '-1', '--oneline', commit]
+    cmd = ['git', '--no-pager', 'log', '-1', '--pretty=format:%h %s\n', commit]
     git.call(cmd, stdout=sys.stdout)
     cmd = ["git", "cherry-pick", "-n"] + cherry_options + [commit]
     p = subprocess.Popen(cmd, stdout=sys.stdout, stderr=subprocess.PIPE)
@@ -566,7 +566,8 @@ def cherry_pick_mv():
 		str = "%d commits were" % count
 	    sys.stderr.write("The following %s skipped:\n" % str)
 	    for commit in config["skipped_commits"]:
-		cmd = ['git', '--no-pager', 'log', '-1', '--oneline', commit]
+		cmd = ['git', '--no-pager', 'log', '-1',
+			'--pretty=format:%h %s\n', commit]
 		oneline = git.call(cmd).rstrip()
 		sys.stderr.write("    %s\n" % oneline)
 
