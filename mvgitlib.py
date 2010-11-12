@@ -482,7 +482,7 @@ class Limb(object):
 	"""Returns True if self's name is that of a local or remote limb"""
 
 	for prefix in ('refs/heads', 'refs/remotes'):
-	    cmd = ['git', 'for-each-ref', '%s/%s/' % (prefix, self.name)]
+	    cmd = ['git', 'for-each-ref', '%s/%s/*' % (prefix, self.name)]
 	    if bool(call(cmd, error=None, stderr=None)):
 		return True
 
