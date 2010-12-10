@@ -343,7 +343,6 @@ def main():
 
     try:
 	git.check_repository()
-	git.require_mvl6_kernel_repo()
 
 	signoff_mv()
 
