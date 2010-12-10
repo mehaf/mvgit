@@ -324,6 +324,9 @@ Disposition: %s
 def validate_commit(commit):
     commit = git.read_commit(commit)
     errors = commit.mv_header_errors()
+    subject = '\n'.join(commit.subject)
+    if subject.startswith("Oneline summary of change,"):
+	errors.append("Bad subject: %s\n" % subject)
     for error in errors:
 	sys.stdout.write("Warning: "+ error)
 
