@@ -1165,7 +1165,7 @@ class Commit(object):
 	if not errors:
 	    for key in self.mv_header_fields.keys():
 		lkey = key.lower().rstrip(':')
-		if lkey == 'changeid:' and not mvl6_kernel_repo():
+		if lkey == 'changeid' and not mvl6_kernel_repo():
 		    continue
 		if lkey not in dict:
 		    errors.append('missing "%s" MV header line\n' % key)
