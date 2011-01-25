@@ -254,7 +254,7 @@ def summarize_branches(branches, action):
 
 	    if (newbranch != newbranch.limb.info_branch and
 		    newbranch not in newbranch.limb.dependent_branches):
-		notice('        ERROR: not in branch_dependencies\n')
+		notice('        WARNING: not in branch_dependencies\n')
 
 	    if newbranch.subname.startswith('msd.'):
 		check_msd_branch(newbranch)
