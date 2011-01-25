@@ -451,7 +451,7 @@ def summarize_new_commits(branches):
 def file_lines(branch, path):
     ref = '%s:%s' % (branch.name, path)
     cmd = ['git', 'show', ref]
-    return git.call(cmd).splitlines()
+    return git.call(cmd, stderr=None).splitlines()
 
 
 def check_kernel_defconfigs(branch):
@@ -463,7 +463,7 @@ def check_kernel_defconfigs(branch):
     indent = ' ' * 8
     cmd = ['git', 'ls-tree', '--name-only', '%s:configs' % branch.name]
     try:
-	defconfig_names = git.call(cmd).splitlines()
+	defconfig_names = git.call(cmd, stderr=None).splitlines()
     except:
 	notice(indent + 'WARNING: No ./configs directory\n')
 	return
@@ -507,8 +507,14 @@ def check_kernel_defconfigs(branch):
 def check_msd_conf(branch):
     indent = ' ' * 8
     path = 'MONTAVISTA/bitbake/conf/msd.conf'
+
+    try:
+	lines = file_lines(branch, path)
+    except:
+	return
+
     sane_inc = None
-    for line in file_lines(branch, path):
+    for line in lines:
 	if line.startswith('MSD_VERSION'):
 	    notice(indent + "WARNING: obsolete variable: MSD_VERSION in %s\n"
 		    % path)
