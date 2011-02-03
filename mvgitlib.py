@@ -7,7 +7,7 @@ It includes functions to work with git limbs as defined for MVL6.
 '''
 
 # Author: Dale Farnsworth <dfarnsworth@mvista.com>
-# Copyright (C) 2009 MontaVista Software, Inc.
+# Copyright (C) 2009-2011 MontaVista Software, Inc.
 #
 # This file is licensed under the terms of the GNU General Public License
 # version 2. This program is licensed "as is" without any warranty of any
@@ -1225,6 +1225,17 @@ class Commit(object):
 	id = self.id
 	cmd = 'git diff %s^..%s | git patch-id' % (id, id)
 	return call(cmd, shell=True).split(None, 1)[0]
+
+
+    @cached_property
+    def committer_time(self):
+	'''
+	Return the commit time as an integer - seconds since the epoch
+	'''
+	for line in self.header:
+	    if line.startswith('committer '):
+		fields = line.split(' ')
+		return int(fields[-2])
 
 
     def write_id(self, file):

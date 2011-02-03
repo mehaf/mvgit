@@ -321,16 +321,19 @@ def summarize_commits(branches, action):
 		if len(commit.parents()) > 1:
 		    merges.append(commit)
 
-		errs = commit.mv_header_errors()
-		if errs:
-		    for err in errs:
-			note_error('    Warning: Commit %s %s' %
-				(commit.abbrev_id(), err))
-		    note_error('\n')
-		if (commit.mv_header_dict.has_key('disposition') and
-			commit.mv_header_dict['disposition'] == 'MontaVista'):
-		    note_error('    Commit %s has disposition: Montavista\n' %
-			commit.abbrev_id())
+		# Ignore MV header errors older than 1Jan2010
+		if commit.committer_time > 1262304000:
+		    errs = commit.mv_header_errors()
+		    if errs:
+			for err in errs:
+			    note_error('    Warning: Commit %s %s' %
+				    (commit.abbrev_id(), err))
+			note_error('\n')
+		    if (commit.mv_header_dict.has_key('disposition') and
+			    commit.mv_header_dict['disposition'] ==
+			    	'MontaVista'):
+			note_error('    Commit %s has disposition:'
+				' Montavista\n' % commit.abbrev_id())
 
 	    if change == 'cherry-picked':
 		subj = commit.subject[0]
