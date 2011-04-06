@@ -360,7 +360,7 @@ def initialize_commits():
 	sys.exit(1)
 
     if not commits:
-	commits = [x.strip() for x in sys.stdin.readlines()]
+	commits = [x.strip().split()[0] for x in sys.stdin.readlines()]
 
     # newer versions of git-list handle "--no-walk" and a range.
     # sadly, we can't rely on having a recent version.  Do it the hard way
