@@ -26,9 +26,15 @@ limb.  If only <remote_limb> is supplied, then first run "git fetch
 <remote_repository>" to update remote references, and then delete
 <remote_limb> from <remote_repository>.
 
-These [options] are passed directly to 'git push':
+OPTIONS
+-------
+-n::
+--no-fetch::
+	Skip fetching from the remote repository and running
+	git-analyze-changes (when possible).
 
---dry-run, --tags, -f, --force, --thin, --no-thin
+These [options] are passed directly to 'git push'::
+	--dry-run, --tags, -f, --force, --thin, --no-thin
 
 SEE ALSO
 --------

@@ -17,11 +17,13 @@ limb.  If only :<remote_limb> is supplied, then first run "git fetch
 import sys
 import getopt
 import re
+import time
 import mvgitlib as git
 
 
 config = {
     "debug"		: False,
+    "nofetch"		: False,
     'options'           : [],
 }
 
@@ -39,10 +41,10 @@ def usage(msg=None):
 
 
 def process_options():
-    short_opts = "fh"
+    short_opts = "fhn"
     long_opts = [
 	"help", "debug", "dry-run", "tags", "force", "thin", "no-thin",
-	"version",
+	"no-fetch", "version",
     ]
 
     try:
@@ -59,6 +61,8 @@ def process_options():
 	elif option == '--version':
 	    sys.stdout.write('mvgit version %s\n' % "@@MVGIT_VERSION@@")
 	    sys.exit(0)
+	elif option == "-n" or option == "--no-fetch":
+	    config["nofetch"] = True
 	elif value:
 	    if option.startswith("--"):
 		config["options"].append("%s=%s" % (option, value))
@@ -97,14 +101,16 @@ def push_limb():
     repo = config["repo"]
     localname = config["local"].rstrip("/")
     remotename = config["remote"].rstrip("/")
+    nofetch = config["nofetch"]
 
     if not remotename:
         if not localname:
             localname = git.current_limb().name
         remotename = localname
 
-    git.call(['git', 'fetch', repo], stdout=sys.stdout, verbose=True)
-    git.call(['git', 'remote', 'prune', repo], stdout=sys.stdout, verbose=True)
+    if not localname or not nofetch:
+	git.call(['git', 'fetch', repo], stdout=sys.stdout, verbose=True)
+	git.call(['git', 'remote', 'prune', repo], stdout=sys.stdout, verbose=True)
 
     if not localname:
         remote_branchnames = git.branchnames("%s/%s" % (repo, remotename))
@@ -123,15 +129,17 @@ def push_limb():
 	sys.stdout.write("local limb %s not found\n" % localname)
 	sys.exit(1)
 
-    # call "git analyze-changes" before pushing
-    cmd = ['git', 'analyze-changes', '-r', repo]
-    if local != git.current_limb():
-	cmd.append(localname)
-    try:
-	git.call(cmd, stdout=sys.stdout, verbose=True)
-    except:
-	sys.stderr.write("git analyze-changes failed.  No branches pushed.\n")
-	sys.exit(1)
+    if not nofetch:
+	# call "git analyze-changes" before pushing
+	cmd = ['git', 'analyze-changes', '-r', repo]
+	if local != git.current_limb():
+	    cmd.append(localname)
+	try:
+	    git.call(cmd, stdout=sys.stdout, verbose=True)
+	except:
+	    sys.stderr.write("git analyze-changes failed.  No branches pushed.\n")
+	    sys.exit(1)
+	time.sleep(5)
 
     local_subnames = git.subnames(localname)
 
