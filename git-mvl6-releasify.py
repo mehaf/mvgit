@@ -11,8 +11,7 @@ in <committish>, contained in the mvl6 git repository <repo>, a directory
 on the local machine.  If "-r <repo>" is not specified, the current directory
 is used.  The patch series begins with the first commit following <since>.
 If "-s <since>" is not specified, the value contained in the file
-MONTAVISTA/upstream_version of the limb-info branch in the same limb
-as <committish> is used for <since>.
+MONTAVISTA/upstream_version of <committish>.
 
 The calling of external programs has not been reliable in our initial
 build environment for mvl6.  --retries may be used to specify that
@@ -202,25 +201,9 @@ def process_options():
 	sys.stderr.write("git ref not found: %s\n" % committish)
 	sys.exit(1)
 
-    if not since_commit:		# first look on the current branch
+    if not since_commit:
 	upstream_version_ref = "%s:%s" % (
 		committish, "MONTAVISTA/upstream_version")
-	try:
-	    cmd = "git show %s" % upstream_version_ref
-	    since_commit = "v%s" % call(cmd).strip()
-	except:
-	    pass
-
-    if not since_commit:		# then look on limb-info branch
-	limb_info = os.path.join(os.path.dirname(committish), "limb-info")
-	cmd = "git rev-parse --symbolic-full-name %s" % limb_info
-	info_fullname = call(cmd, error=None, stderr=None).strip()
-	if not info_fullname:
-	    sys.stderr.write("Invalid limb-info branch: %s\n" % limb_info)
-	    usage()
-
-	upstream_version_ref = "%s:%s" % (
-		limb_info, "MONTAVISTA/upstream_version")
 	try:
 	    cmd = "git show %s" % upstream_version_ref
 	    since_commit = "v%s" % call(cmd).strip()

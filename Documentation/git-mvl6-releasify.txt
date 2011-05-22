@@ -25,8 +25,7 @@ in <committish>, contained in the mvl6 git repository <repo>, a directory
 on the local machine.  If <repo> is not specified, the current directory
 is used.  The patch series begins with the first commit following <since>.
 If <since> is not specified, the value contained in the file
-MONTAVISTA/upstream_version of the limb-info branch in the same limb
-as <committish> is used for <since>.
+MONTAVISTA/upstream_version of <committish>.
 
 If <output_dir> exists and is not empty, 'git mvl6-releasify' fails
 unless -f is specified.
