@@ -522,11 +522,13 @@ def check_msd_conf(branch):
 	    notice(indent + "WARNING: obsolete variable: MSD_VERSION in %s\n"
 		    % path)
 	if line.startswith('include') or line.startswith('require'):
-	    if 'sane-2.6.' in line:
+	    if 'sane-' in line:
 		sane_inc = line
 
     if not sane_inc:
-	notice(indent + "WARNING: %s doesn't require sane.2.6.XX.inc\n" % path)
+	notice(indent +
+	    "WARNING: %s doesn't require sane-XXXX.inc\n"
+	    % path)
     
 
 def check_bitbake_files(branch):
