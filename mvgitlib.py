@@ -152,7 +152,7 @@ class Limb(object):
 	Return the major kernel version on which branches in the limb are based
 	'''
 
-	re_is_numeric = re.compile(r'\d+\.\d+\.\d+$')
+	re_is_numeric = re.compile(r'\d+\.\d+(\.\d+)?$')
 
 	for b in (preferred_branch,
 		  self.info_branch,
@@ -1670,7 +1670,7 @@ def repo_type():
 	elif case == 2:
 	    cmd = ['git', 'branch', '-r']
 	    for branch_name in call(cmd, error=None, stderr=None).splitlines():
-		if 'mvl-2.6.' in branch_name and '/limb-info' in branch_name:
+		if 'mvl-' in branch_name and '/limb-info' in branch_name:
 		    cached_repo_type = 'mvl6-kernel'
 		    break
 	    else:
