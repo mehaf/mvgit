@@ -293,24 +293,21 @@ def summarize_commits(branches, action):
 	notice('====== %s changes:\n' % branch.newbranch.name)
 
 	changemap = {}
-	dups = 0
 	for commit in branch.newbranch.commits:
 	    changeid = commit.changeid
-	    if changeid in changemap:
-		notice('    Error: commit %s has same changeid '
-			'as commit %s\n' %
-			(commit.id, changemap[changeid].id))
-		dups += 1
-	    else:
+	    if changeid not in changemap:
 		changemap[changeid] = commit
-	if dups:
-	    notice('\n')
 
 	merges = []
 	msg_count = {}
 	for commit, change in branch.commits_with_change:
 	    msg = change_msg(commit, change)
 	    if change != 'deleted':
+		changeid = commit.changeid
+		if commit != changemap[changeid]:
+		    note_error('    Warning: commit %s has same changeid '
+				'as commit %s\n' %
+				(commit.id, changemap[changeid].id))
 		bugz = commit.bugz or 'NONE'
 		msg = "%s - bugz %s" % (msg, bugz)
 
