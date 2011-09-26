@@ -311,7 +311,7 @@ def git_delete_limb():
 		sys.stderr.write("Cannot delete current branch: %s.\n" %
 			current_name)
 		sys.exit(1)
-    except GitError:
+    except git.GitError:
 	pass
 
     cmd = ['git', 'branch', '-D'] + limb_branches
