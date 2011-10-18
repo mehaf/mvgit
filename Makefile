@@ -1,4 +1,4 @@
-# MVGit Version 1.0.5
+# MVGit Version 1.0.6
 
 # The default target of this Makefile is...
 all::
