@@ -252,7 +252,7 @@ def select_merge_commits(commits):
     for parentline in parentlines:
 	ids = parentline.split()
 	if len(ids) > 2:
-	    merge_commits[ids] = True
+	    merge_commits[ids[0]] = True
 
     return merge_commits
 
@@ -354,6 +354,7 @@ def initialize_commits():
     bugz = config["bugz"]
     type = config["type"]
     disposition = config["disposition"]
+    merges_ok = config["merges_ok"]
 
     if not edit and bugz == None:
 	sys.stdout.write("Either of --edit or --bugz options is required")
