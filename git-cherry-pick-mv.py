@@ -208,7 +208,7 @@ def do_abort():
 
     cleanup_state()
     checkout_original_branch()
-    cmd = ['git', '--no-pager', 'log', '-1', '--pretty=format:%h %s\n', 'HEAD']
+    cmd = ['git', '--no-pager', 'log', '-1', '--pretty=format:%h %s\n', 'HEAD^0']
     git.call(cmd, stdout=sys.stdout)
 
     sys.exit(0)
@@ -235,7 +235,7 @@ def do_continue_or_skip():
 	    output_resolve_msg_and_exit()
 	do_commit(commit)
     else:
-	cmd = ['git', 'reset', '--hard', 'HEAD']
+	cmd = ['git', 'reset', '--hard', 'HEAD^0']
 	git.call(cmd, stdout=None)
 	sys.stdout.write("Skipping %s\n" % oneline)
 	config["skipped_commits"].append(commit)
@@ -277,7 +277,7 @@ def unmerged_files():
 
 
 def changed_files():
-    cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD', '--']
+    cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD^0', '--']
     return git.call(cmd, error=None)
 
 
@@ -293,7 +293,7 @@ def cleanup_state():
 def move_commits_to_original_branch():
     branch = config["orig_branchname"]
     if branch != 'detached HEAD':
-	cmd = ['git', 'rev-parse', 'HEAD']
+	cmd = ['git', 'rev-parse', 'HEAD^0']
 	head = git.call(cmd).strip()
 	message = "Cherry-pick finished"
 	orig_head = config["orig_head"]

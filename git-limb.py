@@ -126,7 +126,7 @@ def check_clean_state():
     except:
 	sys.exit(1)
 
-    cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD', '--']
+    cmd = ['git', 'diff-index', '--cached', '--name-status', '-r', 'HEAD^0', '--']
     msg = git.call(cmd)
     if msg:
 	sys.stdout.write("Your index is not up-to-date\n")

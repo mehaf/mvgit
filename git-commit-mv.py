@@ -176,7 +176,7 @@ def process_options():
 	if message_commit:
 	    sys.stdout.write("Error: --amend can't be used with -c or -C\n")
 	    sys.exit(1)
-	message_commit = 'HEAD'
+	message_commit = 'HEAD^0'
 
     if message_commit:
 	commit = git.read_commit(message_commit)
@@ -195,7 +195,7 @@ def generate_changeid(header, body):
     timestr = time.asctime()
     hash.stdin.write(timestr)
 
-    pcmd = ['git', 'rev-list', '-1', 'HEAD']
+    pcmd = ['git', 'rev-list', '-1', 'HEAD^0']
     parent = subprocess.Popen(pcmd, stdout=subprocess.PIPE)
     data = parent.stdout.read()
     hash.stdin.write(data)
@@ -203,7 +203,7 @@ def generate_changeid(header, body):
     if rc != 0:
 	raise Exception("Command %s returned %d\n" % (" ".join(pcmd), rc))
 
-    dcmd = ['git', 'diff', '--cached', 'HEAD']
+    dcmd = ['git', 'diff', '--cached', 'HEAD^0']
     diff = subprocess.Popen(dcmd, stdout=subprocess.PIPE)
     while True:
 	data = diff.stdout.read(4096)
@@ -363,7 +363,7 @@ def commit_mv():
     if rc != 0:
 	sys.exit(rc)
 
-    validate_commit('HEAD')
+    validate_commit('HEAD^0')
 
 
 def main():
