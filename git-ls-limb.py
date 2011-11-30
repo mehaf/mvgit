@@ -89,7 +89,7 @@ def git_ls_limb():
     if limbname:
 	limb = git.Limb.get(limbname)
 	if not limb or not limb.exists():
-	    sys.stdout.write("%s: limb not found\n" % limbname)
+	    sys.stderr.write("%s: limb not found\n" % limbname)
 	    sys.exit(1)
 
     branches = True
