@@ -80,7 +80,6 @@ that has stopped in the middle due to need for programmer intervention.
 	The set of commits to be cherry picked may be either a list of
 	individual commits or it may be a range of commits as understood
 	by git-rev-list.
-	Cherry pick all commits from <rev1> to <rev2>, inclusively.
 
 [--stdin | --]::
 	Instead of picking a given revision range, read a set of commit IDs
