@@ -489,7 +489,7 @@ def do_commit(commit):
 
     if edit:
 	if not changes_added_to_index():
-	    sys.stdout.write("Skipping %s - No additional changes to pick.\n\n"
+	    sys.stdout.write("Skip %s - No additional changes to pick.\n"
 			     % abbrev(commit))
 	    config["skipped_commits"].append(commit)
 	    return
@@ -514,7 +514,7 @@ def do_commit(commit):
     rc = p.wait()
     if 'nothing added to commit' in output or 'nothing to commit' in output:
 	skipped = True
-	sys.stdout.write("Skipping %s - No additional changes to pick.\n\n"
+	sys.stdout.write("Skip %s - No additional changes to pick.\n"
 			    % abbrev(commit))
 	config["skipped_commits"].append(commit)
     else:
