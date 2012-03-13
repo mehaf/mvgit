@@ -308,7 +308,7 @@ if changeid or disposition or type or bugz or source:
     if source and not saw_source:
 	lines.insert(last_mvheader_index, "Source: %s\n" % source)
 
-begin, junk = (lines[-1] + " x").split(None, 1)
+begin = lines[-1].split(None, 1)[0]
 if not (begin.endswith("-off-by:") or
 	begin.endswith("acked-by:") or
 	begin.endswith("eviewed-by:")):
