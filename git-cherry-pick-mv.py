@@ -449,12 +449,21 @@ def do_cherry_pick(commit):
     if errmsg == 'Finished one cherry-pick.\n':
 	return
     elif errmsg:
+	resolved_file_lines = []
+	for line in errmsg.splitlines(1):
+	    if line.startswith("Resolved ") or line.startswith("Staged "):
+		resolved_file_lines.append(line)
+
 	unmerged = unmerged_files()
-	if unmerged:
-	    sys.stderr.write(unmerged)
+	if unmerged or resolved_file_lines:
+	    if (resolved_file_lines):
+		sys.stderr.writelines(resolved_file_lines)
+	    else:
+		sys.stderr.write(unmerged)
 	    sys.stderr.write("Automatic cherry-pick failed.  ")
 	    output_resolve_msg_and_exit()
-	sys.stdout.write(errmsg)
+
+	sys.stderr.write(errmsg)
 
     if rc != 0:
 	sys.exit(rc)
