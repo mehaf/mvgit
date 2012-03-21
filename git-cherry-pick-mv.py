@@ -208,7 +208,7 @@ def do_abort():
 
     cleanup_state()
     checkout_original_branch()
-    cmd = ['git', '--no-pager', 'log', '-1', '--pretty=format:%h %s\n', 'HEAD^0']
+    cmd = ['git', 'reset', '--hard']
     git.call(cmd, stdout=sys.stdout)
 
     sys.exit(0)
