@@ -532,6 +532,7 @@ def do_commit(commit):
 	for line in lines:
 	    if (not line.startswith('[detached HEAD ') and
 		    not line.startswith(' Author: ') and
+		    not 'file changed' in line and
 		    not 'files changed' in line and
 		    not 'create mode' in line):
 		sys.stdout.write(line)
