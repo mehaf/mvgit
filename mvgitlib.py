@@ -1029,7 +1029,7 @@ class Commit(object):
 
     mv_header_fields = {
 	'Source:'		: re.compile(r'.'),
-	'MR:'		: re.compile(r'\d+(, \d+)?$'),
+	'MR:'		: re.compile(r'\d+(, \d+)*$'),
 	'Type:'		: re.compile(r'''
 				    (Defect\ Fix $) |
 				    (Security\ Fix $) |
