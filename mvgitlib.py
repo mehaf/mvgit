@@ -22,6 +22,10 @@ import grp
 import time
 import tempfile
 
+def commit_contains(container, contained):
+    """Return True if the commit container contains the commit contained"""
+    cmd = ['git', 'rev-list', '-1', contained, '^%s' % container]
+    return not bool(call(cmd, stderr=None))
 
 class GitError(Exception):
     def __init__(self, msg):
@@ -933,8 +937,7 @@ class Branch(Ref):
 		commit = commit.id
 	except:
 		pass
-	cmd = ['git', 'rev-list', '-1', '%s' % commit, '^%s' % self.name]
-	return not bool(call(cmd, stderr=None))
+	return commit_contains(self.name, commit)
 
 
     @cached_property
@@ -1084,8 +1087,7 @@ class Commit(object):
 
     def contains(self, commit_id):
 	"""Return True if the commit contains the commit_id"""
-	cmd = ['git', 'rev-list', '-1', commit_id, '^%s' % self.id]
-	return not bool(call(cmd, stderr=None))
+	return commit_contains(self.id, commit_id)
 
 
     @cached_property
