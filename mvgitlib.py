@@ -939,6 +939,9 @@ class Branch(Ref):
 	try:
 		commit = commit.id
 	except:
+	    try:
+		commit = commit.name
+	    except:
 		pass
 	return commit_contains(self.name, commit)
 
