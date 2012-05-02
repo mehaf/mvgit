@@ -84,7 +84,7 @@ class Limb(object):
 
     re_limbname = re.compile(r'''
 	((?P<parent_limbname>		[^/]+)
-	    (				/bugfixes/
+	    (				.*/bugfixes/
 		(?P<bugz>		[0-9]+)[^/]*)?)
 	''', re.X)
     re_dependent = re.compile(r'^(\S+):(.*)$')
