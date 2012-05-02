@@ -304,7 +304,7 @@ def summarize_commits(branches, action):
 	    msg = change_msg(commit, change)
 	    if change != 'deleted':
 		changeid = commit.changeid
-		if commit != changemap[changeid]:
+		if changeid in changemap and commit != changemap[changeid]:
 		    note_error('    Warning: commit %s has same changeid '
 				'as commit %s\n' %
 				(commit.id, changemap[changeid].id))
