@@ -151,33 +151,45 @@ class Limb(object):
 	return [Branch.get(x) for x in names]
 
 
-    def lookup_upstream_version(self, preferred_branch=None):
+    def lookup_upstream_version(self):
 	'''
 	Return the major kernel version on which branches in the limb are based
 	'''
 
 	re_is_numeric = re.compile(r'\d+\.\d+(\.\d+)?$')
 
-	for b in (preferred_branch,
-		  self.info_branch,
-		  self.common_branch,
-		  preferred_branch and preferred_branch.parent and
-			preferred_branch.parent.remote_branch,
-		  self.info_branch.parent and
-			self.info_branch.parent.remote_branch,
-		  self.common_branch.parent and
-			self.common_branch.parent.remote_branch,
-		  preferred_branch and preferred_branch.remote_branch,
-		  self.info_branch and self.info_branch.remote_branch,
-		  self.common_branch and self.common_branch.remote_branch):
-	    if not b:
-		continue
+	for x in (0, 1, 2, 3, 4, 5, 6, 7):
 	    branches = []
-	    if hasattr(b, 'newbranch'):
-		branches.append(b.newbranch)
-	    branches.append(b)
-	    for branch in branches:
-		ref = '%s:%s' % (branch.name, self.upstream_version_filename)
+	    if x == 0:
+		if (self.common_branch and
+		    hasattr(self.common_branch, 'newbranch')):
+			branches.append(self.common_branch.newbranch)
+	    elif x == 1:
+		for branch in self.branches:
+		    if hasattr(branch, 'newbranch'):
+			branches.append(branch.newbranch)
+	    elif x == 2:
+		if self.common_branch:
+		    branches.append(self.common_branch)
+	    elif x == 3:
+		branches += self.branches
+	    elif x == 4:
+		if (self.common_branch and self.common_branch.parent and
+		    self.common_branch.parent.remote_branch):
+			branches.append(self.common_branch.parent.remote_branch)
+	    elif x == 5:
+		if self.parent and self.parent.remote_limb:
+		    branches += self.parent.remote_limb.repository_branches
+	    elif x == 6:
+		if self.remote_limb:
+		    branches += self.remote_limb.repository_branches
+	    elif x == 7:
+		branches += self.repository_branches
+	    else:
+		break
+
+	    for b in branches:
+		ref = '%s:%s' % (b.id, self.upstream_version_filename)
 		cmd = ['git', 'show', ref]
 		version = call(cmd, error=None, stderr=None)
 		if version:
@@ -922,7 +934,7 @@ class Branch(Ref):
 	Return the major kernel version on which this branch is based
 	'''
 
-	return self.limb.lookup_upstream_version(self)
+	return self.limb.upstream_version
 
 
     def exists(self):
