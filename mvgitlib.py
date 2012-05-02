@@ -179,8 +179,7 @@ class Limb(object):
 		if version:
 		    version = version.strip()
 		    version = re.sub('\n.*', '', version)
-		    if re_is_numeric.match(version):
-			version = 'v%s' % version
+		    version = 'v%s' % version
 		    cmd = ['git', 'rev-parse', version]
 		    if bool(call(cmd, stderr=None)):
 			return version
