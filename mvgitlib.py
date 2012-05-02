@@ -248,10 +248,7 @@ class Limb(object):
 	'''
 
 	common_branchname = os.path.join(self.name, self.limb_common_branchname)
-	branch = Branch.get(common_branchname)
-
-	return ((branch and hasattr(branch, 'newbranch') and branch.newbranch)
-		 or branch)
+	return Branch.get(common_branchname)
 
 
     @cached_property
