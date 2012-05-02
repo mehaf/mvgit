@@ -822,7 +822,10 @@ class Branch(Ref):
 
 	cmd = ['git', 'merge-base',
 		self.oldbranch.id, self.newbranch.id]
-	return call(cmd, error=None, stderr=None).rstrip()
+	base = call(cmd, error=None, stderr=None).rstrip()
+	if not commit_contains(base, self.upstream_version):
+	    base = self.upstream_version
+	return base
 
 
     def old_commits(self):
