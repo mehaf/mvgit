@@ -1,0 +1,4 @@
+#!/bin/sh
+
+git ls-limb -l /origin |
+	sed '/bugfixes/d;/^origin\/mvl-/!d;s/^origin\///;s/\/$//;/^mvl-2.6$/d' | sort

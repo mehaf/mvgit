@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Usage: git-commitid-to-changeid [<commitid-range> | commitid [commitid...]]
+
+for i in "$@"; do
+	case "$i" in
+	*..*)
+		commits="$(git rev-list $i)"
+		test $? != 0 && exit 1
+		;;
+	*)
+		commits="$i"
+		;;
+	esac
+
+	for commit in $commits; do
+		subject=$(git log -1 --pretty=format:%s $commit)
+		changeid=$(git log -1 --pretty=format:%b $commit |
+				sed -n '/^ChangeID: /s/ChangeID: //p')
+		test -z "$changeid" && changeid=$(git rev-parse $commit)
+		echo $changeid $subject
+	done
+done

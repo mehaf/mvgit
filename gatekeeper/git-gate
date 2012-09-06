@@ -1,0 +1,126 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+	if [ "$@" ]; then
+		echo "$@" 1>&2
+		echo 1>&2
+	fi
+	echo "Usage: $0 [--local] [--review] [--no-fetch] <bugfixlimb>" 1>&2
+	exit 1
+}
+
+upstream_version() {
+	limb=$1
+	uvfile=MONTAVISTA/upstream_version
+	uv=$(git show $limb/common:$uvfile 2>/dev/null)
+	[ "$uv" ] || uv=$(git show $limb/limb-info:$uvfile 2>/dev/null)
+	echo v$uv
+}
+
+limbname() {
+	limb="$(echo $1 | sed "s,^$remote/,,; "'s,[-.,;:/)?]*$,,')"
+	isbranch=$(git rev-parse --verify --quiet $remote/$limb || true)
+	[ -n "$isbranch" ] && limb="$(echo $limb | sed 's,/[^/]*$,,')"
+	echo $limb
+}
+
+[ $# -ge 1 ] || usage
+
+cd $(git rev-parse --show-toplevel)
+
+remote=$(git config --get mvista.remote-alias || true)
+[ "$remote" ] || remote=origin
+
+LOCAL=
+REVIEW=
+NOFETCH=
+mainlimb=
+while [ "$#" -ge 2 ]; do
+	case "$1" in
+	--local)
+		LOCAL=true
+		NOFETCH=true
+		shift;;
+	--review)
+		REVIEW=true
+		shift;;
+	-n|--no-fetch)
+		NOFETCH=true
+		shift;;
+	-m|--mainlimb)
+		mainlimb="$2"
+		shift; shift;;
+	*)
+		break;;
+	esac
+	break
+done
+
+[ $# = 1 ] || usage
+
+if [ -z "$NOFETCH" ]; then
+	echo git fetch $remote
+	git fetch $remote
+
+	echo git remote prune $remote
+	git remote prune $remote
+fi
+
+bugfixlimb=$(limbname "$1")
+
+if [ "$mainlimb" ]; then
+	mainlimb="$(limbname "$mainlimb")"
+else
+	case "$bugfixlimb" in
+	*/bugfixes/*)
+		mainlimb="$(echo $bugfixlimb | sed 's,/bugfixes/.*,,')";;
+	*)
+		mainlimb="$(echo $bugfixlimb | sed 's,/.*,,')";;
+	esac
+fi
+
+[ -z "$LOCAL" ] && bugfixlimb="$remote/$bugfixlimb"
+
+echo
+echo git analyze-changes -u $remote/master $remote/$mainlimb..$bugfixlimb
+git analyze-changes -u $remote/master $remote/$mainlimb..$bugfixlimb || true
+
+echo
+echo git limb -f -c $mainlimb $bugfixlimb
+git limb -f -c $mainlimb $bugfixlimb
+
+rm -rf .git/rebase-apply
+
+echo
+echo git rebase-limb $remote/$mainlimb
+git rebase-limb $remote/$mainlimb
+
+# for some reason, this is left lying around and filter-patch doesn't like it
+rm -rf .git/COMMIT_EDITMSG .git/rebase-apply
+
+if [ -z "$REVIEW" ]; then
+	echo
+	echo git signoff-limb -f $remote/$mainlimb..
+	git signoff-limb -f $remote/$mainlimb.. 2>&1 | while read line; do
+		case "$line" in
+		$remote/*" not found"*)
+			;;
+		*"NOT signing off on"*)
+			branch=$(echo $line | sed 's/.* //')
+			echo "-> git checkout $branch"
+			git checkout $branch
+			echo "-> git signoff-mv -f $(upstream_version $mainlimb).."
+			git signoff-mv -f $(upstream_version $mainlimb)..
+			;;
+		*)
+			echo "$line"
+			;;
+		esac
+	done
+fi
+
+echo
+echo git analyze-changes -u $remote/master $remote/$mainlimb..
+git analyze-changes -u $remote/master $remote/$mainlimb.. || true

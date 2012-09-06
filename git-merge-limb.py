@@ -95,8 +95,8 @@ def merge_limb():
 	limb = git.current_limb()
 	limbname = limb.name
 
-    remotename = remote.rstrip("/")
     remote = git.Limb.get(remotename)
+    remotename = remote.name.rstrip("/")
 
     if not limb.exists():
         sys.stdout.write("%s: not found\n" % limbname)

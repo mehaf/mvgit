@@ -1,0 +1,382 @@
+#!/bin/sh
+
+usage() {
+	if [ "$*" != "" ]; then
+		echo "$*" 1>&2
+		echo 1>&2
+	fi
+	echo "Usage: $0 [[-c commitish|-c <count>] ...] --bugz <bugno> [<source-branch> [<dest-branch>...]]" 1>&2
+	exit 1
+}
+
+yorn() {
+	if [ $# != 0 ]; then
+		if [ "$1" = "-y" ]; then
+			shift
+			defans=y
+		fi
+		if [ "$1" = "-n" ]; then
+			shift
+			defans=n
+		fi
+	else
+		defans=
+	fi
+
+	ans=
+	while :; do
+		case "$defans" in
+		Y|y)
+			echo -n "$*" "(Y/n) ";;
+		N|n)
+			echo -n "$*" "(y/N) ";;
+		*)
+			echo -n "$*" "(y/n) ";;
+		esac >/dev/tty
+		read ans
+		[ ! "$isatty" ] && echo $ans >/dev/tty
+		case "$ans" in
+		y|n|q)
+			echo $ans
+			break;;
+		"")
+			if [ "$defans" ]; then
+				echo $defans
+				break
+			fi
+			sleep 1
+			echo "Please answer y or n" >/dev/tty;;
+ 		*)
+			sleep 1
+			echo "Please answer y or n" >/dev/tty;;
+		esac
+	done
+}
+
+current_branch() {
+	git rev-parse --symbolic-full-name HEAD | sed 's,refs/heads/,,'
+}
+
+is_branch() {
+	git rev-parse refs/heads/$1 >/dev/null 2>&1
+}
+
+is_committish() {
+	git rev-parse $1 >/dev/null 2>&1
+}
+
+exit_on_error() {
+	# exit if we didn't successfully finish the cherry-pick-mv
+	if [ "$(git rev-parse --symbolic-full-name HEAD)" = HEAD ]; then
+		echo
+		echo "After finishing git-cherry-pick-mv above, re-issue the command:"
+		echo $orig_cmd
+		exit 1
+	fi
+}
+
+case "$(tty)" in
+/dev/*)
+	isatty=true;;
+not*)
+	isatty=;;
+*)
+	echo "Cannot determine if input is a tty" 1>&2
+	exit 1;;
+esac
+
+
+orig_cmd='git propagate'
+for i in "$@"; do
+	case "$i" in
+	"* *"|"*\t*"|"")
+		orig_cmd="$orig_cmd \"$i\""
+		;;
+	*)
+		orig_cmd=" $orig_cmd $i"
+		;;
+	esac
+done
+
+
+nofetch=
+commit_count=
+commits=
+minusm=
+while [ "$#" -ge 2 ]; do
+	case "$1" in
+	-n|--no-fetch)
+		nofetch=True; shift
+		;;
+	-m)
+		minusm=-m; shift
+		;;
+	-c|--commit)
+		case "$2" in
+		[0123456789]|[0123456789][0123456789])
+			commit_count="$2"; shift; shift
+			;;
+		*)
+			commit="$2"; shift; shift
+			is_committish $commit || usage "Invalid commit: $commit"
+			commits="$commits $commit"
+			;;
+		esac
+		;;
+	--bugz)
+		bugz="$2"; shift; shift
+		bugz_given=true
+		;;
+        --source)
+		cv_source="$2"; shift; shift
+		cv_source_given=true
+		;;
+        --type)
+		cv_type="$2"; shift; shift
+		cv_type_given=true
+		;;
+        --disposition)
+		cv_dispos="$2"; shift; shift
+		cv_dispos_given=true
+		;;
+	*)
+		break
+		;;
+	esac
+done
+
+cherry_parms=""
+
+if [ -n "$bugz_given" ]; then
+	case "$bugz" in
+	[0-9][0-9][0-9][0-9][0-9][0-9]|[0-9][0-9][0-9][0-9][0-9]|[0-9][0-9][0-9][0-9])
+		;;
+	"")
+		;;
+	*)
+		usage "Invalid bugz: $bugz"
+		;;
+	esac
+	cherry_parms="$cherry_parms --bugz $bugz"
+fi
+
+if [ -n "$cv_source_given" ]; then
+	cherry_parms="$cherry_parms --source \"$cv_source\""
+fi
+
+if [ -n "$cv_type_given" ]; then
+	cherry_parms="$cherry_parms --type \"$cv_type\""
+fi
+
+if [ -n "$cv_dispos_given" ]; then
+	cherry_parms="$cherry_parms --disposition \"$cv_dispos\""
+fi
+
+
+dump() {
+    for i in $*; do
+	echo $i
+    done
+}
+
+original_branch="$(current_branch)"
+
+if [ "$#" = "0" ]; then
+	source="$original_branch"
+else
+	source="$1"; shift
+	is_branch $source || usage "Invalid branch: $source"
+fi
+
+if [ -n "$commit_count" ]; then
+	commits="$commits $(git rev-list --reverse -$commit_count $source)"
+fi
+
+source_limb=$(dirname "$source")
+
+if [ -z "$nofetch" ]; then
+	echo git fetch
+	git fetch
+fi
+
+if [ "$#" = "0" ]; then
+	mainlimbs="$(
+	    (
+		git ls-limb -l /origin |
+		sed '/bugfixes/d;/^origin\/mvl-/!d;s/^origin\///;s/\/$//';
+		git ls-limb -l / |
+		sed '/bugfixes/d;/^mvl-/!d;s/\/$//';
+	    ) | sort -u
+	)"
+	# Don't propagate to PS MSD branches
+	dests=$(git changes --dependents "$source" $mainlimbs |
+							egrep -v '/msd\.ps-|/msd\..*-ps$')
+else
+	dests="$@"
+fi
+
+tdests="$dests"
+dests=
+for dest in $tdests; do
+	case $dest in
+	origin/*)
+		dest=$(echo $dest | sed 's,origin/,,')
+		;;
+	esac
+	dests="$dests $dest"
+done
+
+for dest in $dests; do
+	limb=$(dirname "$dest")
+	if [ "$limb" != "$previous_limb" -a "$limb" != "$source_limb" ]; then
+		if git ls-limb "$limb" >/dev/null 2>&1
+		then
+			echo
+			ans=$(yorn "OVERWRITE limb: $limb with origin/$limb?")
+		else
+			ans=y
+		fi
+		if test "$ans" = y; then
+			git limb -f "$limb" origin/"$limb"
+		elif test "$ans" = q; then
+			exit 0
+		else
+			echo using existing "$limb"
+		fi
+	fi
+	previous_limb="$limb"
+done
+
+if [ "$#" = "0" ]; then
+	dests=$(git changes --dependents "$source" $mainlimbs |
+							egrep -v '/msd\.ps-|/msd\..*-ps$')
+fi
+
+echo rm -rf .git/COMMIT_EDITMSG .git/.dotest .git/.dotest-merge
+rm -rf .git/COMMIT_EDITMSG .git/.dotest .git/.dotest-merge/
+
+if [ -n "$dests" ]; then
+	ndests=
+	for dest in $dests; do
+		if is_branch $dest; then
+			ndests="$ndests $dest"
+		else
+			echo "Invalid branch: $dest"
+		fi
+	done
+	dests="$ndests"
+	if [ "$commits" ]; then
+		change_count=$(echo $commits | wc -w)
+		case $change_count in
+		1)
+			n_commits="1 commit";;
+		*)
+			n_commits="$change_count commits";;
+		esac
+		echo "Propagating $n_commits to:"
+	else
+		echo "Propagating $source to:"
+	fi
+	for dest in $dests; do
+		echo "	$dest"
+	done
+else
+	echo "$source has no dependent branches"
+fi
+
+previous_limb=
+for dest in $dests; do
+	if [ "$commits" ]; then
+		limb=$(dirname "$dest")
+		def=-y
+		if [ "$previous_limb" -a "$limb" != "$previous_limb" ]; then
+			echo git changes -l
+			git changes -l
+			echo git analyze-changes
+			git analyze-changes
+			def=
+		fi
+		case $(basename $dest) in
+#		msd.*|bsp.*)
+		msd.*)
+			def=-n ;;
+		esac
+		previous_limb="$limb"
+		echo
+		change_count=$(echo $commits | wc -w)
+		case $change_count in
+		1)
+			n_commits="1 commit";;
+		*)
+			n_commits="$change_count commits";;
+		esac
+		ans=$(yorn $def "Propagate $n_commits to $dest")
+		if [ "$ans" = 'n' ]; then
+			echo Skipping $dest
+			continue
+		elif test "$ans" = q; then
+			exit 0
+		fi
+		if [ "$dest" != "$(current_branch)" ]; then
+			git checkout "$dest"
+		fi
+		eval git cherry-pick-mv $minusm "$cherry_parms" $commits
+		exit_on_error
+		echo Propagated to "$dest"
+		continue
+	fi
+	change_count=$(git changes "$source" "$dest" | wc -l)
+	case $change_count in
+	0)
+		echo "No pending changes in $source for $dest"
+		continue;;
+	1)
+		n_commits="1 commit";;
+	*)
+		n_commits="$change_count commits";;
+	esac
+
+	def=-y
+	limb=$(dirname "$dest")
+	if [ "$previous_limb" -a "$limb" != "$previous_limb" ]; then
+		echo git changes -l
+		git changes -l
+		echo git analyze-changes
+		git analyze-changes
+		dev=
+	fi
+	case $(basename $dest) in
+#	msd.*|bsp.*)
+	msd.*|sdk)
+		def=-n ;;
+	esac
+	previous_limb="$limb"
+	echo
+	ans=$(yorn $def "Propagate $n_commits to $dest")
+	if [ "$ans" = 'n' ]; then
+		echo Skipping $dest
+		continue
+	elif test "$ans" = q; then
+		exit 0
+	fi
+	if [ "$dest" != "$(current_branch)" ]; then
+		git checkout "$dest"
+	fi
+	git changes "$source" | eval git cherry-pick-mv $minusm "$cherry_parms" --
+	exit_on_error
+	echo Propagated to "$dest"
+done
+
+#echo git changes -l
+#git changes -l
+#echo
+#echo git analyze-changes -u origin/master
+#git analyze-changes -u origin/master
+
+#if [ "$(current_branch)" != "$original_branch" ]; then
+#	echo
+#	ans=$(yorn "Checkout $original_branch")
+#	if [ "$ans" = 'y' ]; then
+#		git checkout "$original_branch"
+#	fi
+#fi

@@ -241,7 +241,7 @@ def commit_message():
 
     subject = ("Oneline summary of change, less then 60 characters\n"
 		"# *** Leave above line blank for clean log formatting ***")
-    source = "MontaVista Software, LLC | URL | Some Guy <email@addr>"
+    source = "MontaVista Software, LLC | Cavium Networks, Inc | URL | Some Guy <email@addr>"
     bugz = "Bugzilla bug number"
     type = "Defect Fix | Security Fix | Enhancement | Integration"
     disposition = ("Submitted to | Needs submitting to | Merged from |"

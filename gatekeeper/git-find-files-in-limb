@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Usage: git find-files-in-limb limb path...
+
+usage() {
+	echo "Usage: git find-files-in-limb limb filepath..." 1>&2
+	exit 1
+}
+
+if [ $# -lt 2 ]; then
+	usage
+fi
+
+limb="$1"; shift
+
+for path in "$@"; do
+	for branch in $(git ls-limb -b "$limb"); do
+		if git rev-list "$branch":"$path" 2>/dev/null; then
+			echo "$path" is in "$branch"
+		fi
+	done
+done

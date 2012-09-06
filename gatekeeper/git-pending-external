@@ -1,0 +1,11 @@
+#!/bin/sh
+
+limbs="$@"
+
+[ "$limbs" ] || limbs=$(git mainlimbs)
+
+git fetch
+for limb in $limbs; do
+	git changes -l origin/$limb |
+		sed -n '/external\.linux-[23]\.[.0-9]*\.y/s,origin/,,p'
+done
