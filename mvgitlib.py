@@ -75,6 +75,12 @@ class User(object):
 	    except:
 		notice("Can't find name for gid %d.  (This can usually be safely ignored.)\n" % gid)
 
+def is_empty_commit(id):
+    """Returns true if the given commit is empty."""
+
+    cmd = ['git', 'diff-tree', id.changeid]
+    return not bool(call(cmd, stderr=None))
+
 
 class Limb(object):
     '''
@@ -1551,6 +1557,17 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
     left_ids = [x[0] for x in left_changes_with_commits]
     left_commits = [left_dict[x] for x in left_ids if x not in right_dict]
 
+    # Delete any commits that are empty, as they won't propagate.  These are
+    # going to generally be empty merge commits, anyway.
+    i = 0
+    end = len(left_commits)
+    while (i < end):
+        if is_empty_commit(left_commits[i]):
+            del(left_commits[i])
+            end -= 1
+        else:
+            i += 1
+
     if not symmetric:
 	return left_commits
 
@@ -1560,6 +1577,17 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
 
     right_ids = [x[0] for x in right_changes_with_commits]
     right_commits = [right_dict[x] for x in right_ids if x not in left_dict]
+
+    # Delete any commits that are empty, as they won't propagate.  These are
+    # going to generally be empty merge commits, anyway.
+    i = 0
+    end = len(right_commits)
+    while (i < end):
+        if is_empty_commit(right_commits[i]):
+            del(right_commits[i])
+            end -= 1
+        else:
+            i += 1
 
     return (left_commits, right_commits)
 
