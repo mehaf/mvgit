@@ -78,7 +78,7 @@ class User(object):
 def is_empty_commit(id):
     """Returns true if the given commit is empty."""
 
-    cmd = ['git', 'diff-tree', id.changeid]
+    cmd = ['git', 'diff-tree', id.id]
     return not bool(call(cmd, stderr=None))
 
 
