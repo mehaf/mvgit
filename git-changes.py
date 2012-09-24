@@ -148,7 +148,8 @@ def git_pending_commits():
 
     commits = git.changeid_diff(left, right, with_rejects=with_rejects)
 
-    if commits and not commits[0].contains(left_base):
+    if (not left.has_branch_merge_base() and commits
+        and not commits[0].contains(left_base)):
 	sys.stderr.write("Error: upstream version: %s\n"
 	    "       is not a first-parent ancestor of:\n"
 	    "       %s\n" % (left_base, left.name))

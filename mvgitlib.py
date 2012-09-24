@@ -727,18 +727,6 @@ class Branch(Ref):
 
 
     @cached_property
-    def first_parent_commits(self):
-	'''
-	Return all commits added to this branch since the limb's merge base
-	'''
-	if self.id:
-	    return read_commits(self, self.merge_base, first_parent=True)
-	else:
-	    sys.stderr.write('\nNo branch %s\n' % self.name)
-	    sys.exit(1)
-
-
-    @cached_property
     def changeids_with_commits(self):
 	'''
 	Return a list of (changeid, commit) tuples of added commits
@@ -758,28 +746,6 @@ class Branch(Ref):
 	base to those commits
 	'''
 	return dict(self.changeids_with_commits)
-
-
-    @cached_property
-    def first_parent_changeids_with_commits(self):
-	'''
-	Return a list of (changeid, commit) tuples of added commits
-
-	Commits are those added to this branch since the limb's merge
-	base to those commits
-	'''
-	return [(x.changeid, x) for x in self.first_parent_commits]
-
-
-    @cached_property
-    def first_parent_changeid_to_commit(self):
-	'''
-	Return a mapping (dict) of each added changeid to its commit
-
-	Commits are those added to this branch since the limb's merge
-	base to those commits
-	'''
-	return dict(self.first_parent_changeids_with_commits)
 
 
     @property
@@ -814,8 +780,14 @@ class Branch(Ref):
 	return not self.newbranch or self.id == self.newbranch.id
 
 
+    def has_branch_merge_base(self):
+        self.upstream_version
+        return hasattr(self, 'local_upstream_version')
+
     @cached_property
     def merge_base(self):
+	if self.has_branch_merge_base():
+            return self.local_upstream_version
 	if hasattr(self, 'merge_limb'):
 	    limb = self.merge_limb
 	else:
@@ -940,6 +912,16 @@ class Branch(Ref):
 	Return the major kernel version on which this branch is based
 	'''
 
+        ref = "%s:%s" % (self.id, 'MONTAVISTA/merge_base')
+        cmd = ['git', 'show', ref]
+        version = call(cmd, error=None, stderr=None)
+        if version:
+            version = re.sub('\n.*', '', version)
+            cmd = ['git', 'rev-parse', version]
+            if bool(call(cmd, stderr=None)):
+                self.local_upstream_version = version
+                return version
+            
 	return self.limb.upstream_version
 
 
@@ -1389,7 +1371,7 @@ def call(cmd, **kwargs):
     return output
 
 
-def read_commits(tip, ancestor_id, first_parent=False, with_filenames=False):
+def read_commits(tip, ancestor_id, with_filenames=False):
     '''
     Instantiate commits for a given range
     '''
@@ -1478,8 +1460,6 @@ def read_commits(tip, ancestor_id, first_parent=False, with_filenames=False):
     ancestor_stop = '^%s' % ancestor_id
 
     cmd = ['git', 'log', '--pretty=raw', '--topo-order', '--reverse']
-    if first_parent:
-	cmd.append('--first-parent')
     if with_filenames:
 	cmd.append('--name-only')
     cmd += [tip, ancestor_stop]
@@ -1545,10 +1525,10 @@ def changeid_diff(left, right, symmetric=False, with_rejects=False):
     are in right, but not in left.
     """
 
-    left_changes_with_commits = left.first_parent_changeids_with_commits
-    right_changes_with_commits = right.first_parent_changeids_with_commits
-    left_dict = left.first_parent_changeid_to_commit
-    right_dict = right.first_parent_changeid_to_commit
+    left_changes_with_commits = left.changeids_with_commits
+    right_changes_with_commits = right.changeids_with_commits
+    left_dict = left.changeid_to_commit
+    right_dict = right.changeid_to_commit
 
     if not with_rejects:
 	for id in right.rejected_changes:
