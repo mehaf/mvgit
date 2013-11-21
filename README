@@ -1,0 +1,5 @@
+To use the MV git extensions, do the following
+# make sure you have git on your host, e.g "sudo apt-get install git"
+make 
+sudo make install
+
