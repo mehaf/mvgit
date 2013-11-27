@@ -242,7 +242,7 @@ def commit_message():
     subject = ("Oneline summary of change, less then 60 characters\n"
 		"# *** Leave above line blank for clean log formatting ***")
     source = "Mentor Graphics Corporation | URL | Some Guy <email@addr>"
-    bugz = "Bugzilla bug number"
+    bugz = "Jira ID"
     type = "Defect Fix | Security Fix | Enhancement | Integration"
     disposition = ("Submitted to | Needs submitting to | Merged from |"
 		    " Accepted by | Rejected by | Backport from | Local")
