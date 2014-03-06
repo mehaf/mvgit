@@ -8,7 +8,8 @@ git-commit-mv - git-commit with MontaVista extensions
 SYNOPSIS
 --------
 [verse]
-'git commit-mv' [[-c|-C] <commit> [-x]] [--bugz <bugno>]
+'git commit-mv' [[-c|-C] <commit> [-x]] [--bugz <defect list>]
+		[--jira <defect list>] [--mr <defect list>]
 		[--type <string>] [--disposition <string>]
 		[--source <string>] [--changeid <hash>]
 		[--no-edit] [--no-signoff] [--amend]
@@ -47,8 +48,10 @@ OPTIONS
 -x::
 	Add a "(cherry picked from <commit>)" when used with the -c option.
 
---bugz <bugno>, --mr <bugno>::
-	Fill in the "MR:" field of the MontaVista commit header with <bugno>.
+--bugz <defect list>, --mr <defect list>, --jira <defect list>::
+	Fill in the "MR:" field of the MontaVista commit header with <defect list>.
+	<defect list> can be one or more (bugz numbers or Jira IDs), separated by
+	commas.
 
 --source <string>::
 	Fill in the "Source:" field of the MontaVista commit header with the

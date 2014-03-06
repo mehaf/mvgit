@@ -18,7 +18,9 @@ Usage: git-cherry-pick-mv [opts] <commit>...
 		Take commit list from stdin instead of the command line.
 	--source <source>
 		Provides the value of the Source: field of the MV-header.
-	--bugz <bugz_number>
+	--bugz | <bugz_number>
+		Provides the value of the MR: field of the MV-header.
+	--jira | <Jira ID>
 		Provides the value of the MR: field of the MV-header.
 	--type <type>
 		Provides the value of the Type: field of the MV-header.
@@ -83,7 +85,7 @@ def process_options():
 	"help", "debug", "version", "edit",
 	"ff", "continue", "skip", "abort", "stdin",
 	"source=", "bugz=", "mr=", "type=", "disposition=",
-	"no-commit",
+	"no-commit", "jira=",
     ]
 
     noargs = False
@@ -124,7 +126,7 @@ def process_options():
 	    config["edit"] = True
 	elif option == '--source':
 	    config['source'] = value
-	elif option in ('--bugz', '--mr'):
+	elif option in ('--bugz', '--mr', '--jira'):
 	    config['bugz'] = value
 	elif option == '--type':
 	    config['type'] = value

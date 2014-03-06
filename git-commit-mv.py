@@ -272,7 +272,7 @@ def commit_message():
     if opt["source"]:
     	source = opt["source"]
     if opt["bugz"]:
-	if bugz.startswith('Bugzilla'):
+	if bugz.startswith('Jira'):
 	    bugz = opt["bugz"]
 	else:
 	    bugz = bugz.split(',', 2)[0].strip()

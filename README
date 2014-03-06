@@ -3,3 +3,7 @@ To use the MV git extensions, do the following
 make 
 sudo make install
 
+# To install man pages
+make doc
+make install-man
+
