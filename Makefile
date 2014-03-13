@@ -35,6 +35,7 @@ SCRIPT_PYTHON =
 SCRIPT_SH += git-bulk-cherry-mv.sh
 SCRIPT_SH += git-push-mv.sh
 SCRIPT_SH += git-quiltexport-mv.sh
+SCRIPT_SH += git-blame-feature.sh
 
 SCRIPT_PYTHON += git-analyze-changes.py
 SCRIPT_PYTHON += git-changes.py
