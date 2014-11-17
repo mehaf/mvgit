@@ -8,7 +8,7 @@ commits=`mktemp -t gbf-com-XXX`
 search=`mktemp -t gbf-ag-XXX`
 
 echo "Lines matching ${FEATURE}:"
-ag -w ${FEATURE} >> ${search}
+ag -w ${FEATURE} > ${search}
 cat ${search}
 
 IFS=":"
