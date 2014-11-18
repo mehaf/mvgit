@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
-Usage: git-commit-mv [[-c|-C] <commit> [-x]] [--bugz <bugno>] [--type <string>]
+Usage: git-commit-mg [[-c|-C] <commit> [-x]] [--jira <jira-id>] [--type <string>]
 		     [--disposition <string>] [--source <string>]
 		     [--no-edit] [--amend] [git-commit options]
 
-       git-commit-mv --version
+       git-commit-mg --version
 
     OPTIONS
 	-C <commit>
@@ -16,20 +16,20 @@ Usage: git-commit-mv [[-c|-C] <commit> [-x]] [--bugz <bugno>] [--type <string>]
 		Same as -C <commit> above, but lets you edit the commit
 		message.
 
-	--bugz <bugno>, --mr <bugno>
-		Fill in the "MR:" field of the MontaVista commit header with
+	--jira <bugno>, --mr <bugno>
+		Fill in the "MR:" field of the commit header with
 		<bugno>.
 
 	--source <string>
-		Fill in the "Source:" field of the MontaVista commit header
+		Fill in the "Source:" field of the commit header
 		with the string specified in the command option.
 
 	--type <string>
-		Fill in the "Type:" field of the MontaVista commit header
+		Fill in the "Type:" field of the commit header
 		with the string specified in the command option.
 
 	--disposition <string>
-		Fill in the "Disposition:" field of the MontaVista commit
+		Fill in the "Disposition:" field of the commit
 		header with the string specified in the command option.
 
 	--no-edit
@@ -70,7 +70,7 @@ import mvgitlib as git
 opt = {
     "debug"		: False,
     "source"		: None,
-    "bugz"		: None,
+    "jira"		: None,
     "type"		: None,
     "disposition"	: None,
     "changeid"		: None,
@@ -101,7 +101,7 @@ def usage(msg=None):
 def process_options():
     short_opts = "aC:c:x"
     long_opts = [
-	"help", "debug", "version", "source=", "bugz=", "mr=", "type=",
+	"help", "debug", "version", "source=", "jira=", "mr=", "type=",
 	"disposition=", "changeid=", "no-edit", "no-signoff",
 	"amend", "reset_author",
     ]
@@ -129,8 +129,8 @@ def process_options():
 	    opt['commit_options'].append(option)
 	elif option == '--source':
 	    opt['source'] = value
-	elif option in ('--bugz', '--mr'):
-	    opt['bugz'] = value
+	elif option in ('--jira', '--mr'):
+	    opt['jira'] = value
 	elif option == '--type':
 	    opt['type'] = value
 	elif option == '--disposition':
@@ -242,7 +242,7 @@ def commit_message():
     subject = ("Oneline summary of change, less then 60 characters\n"
 		"# *** Leave above line blank for clean log formatting ***")
     source = "Mentor Graphics Corporation | URL | Some Guy <email@addr>"
-    bugz = "Jira ID"
+    jira = "Jira ID"
     type = "Defect Fix | Security Fix | Enhancement | Integration"
     disposition = ("Submitted to | Needs submitting to | Merged from |"
 		    " Accepted by | Rejected by | Backport from | Local")
@@ -259,7 +259,7 @@ def commit_message():
 	    body.append("(cherry picked from commit %s)" % message_commit.id)
 
 	if 'mr' in mv_header_dict:
-	    bugz = mv_header_dict['mr']
+	    jira = mv_header_dict['mr']
 	if 'source' in mv_header_dict:
 	    source = mv_header_dict['source']
 	if 'type' in mv_header_dict:
@@ -271,13 +271,10 @@ def commit_message():
 
     if opt["source"]:
     	source = opt["source"]
-    if opt["bugz"]:
-	if bugz.startswith('Jira'):
-	    bugz = opt["bugz"]
-	else:
-	    bugz = bugz.split(',', 2)[0].strip()
-	    if bugz != opt["bugz"]:
-		bugz += ", " + opt["bugz"]
+    if opt["jira"]:
+	jira = jira.split(',', 2)[0].strip()
+	if jira != opt["jira"]:
+	    jira += ", " + opt["jira"]
     if opt["type"]:
 	type = opt["type"]
     if opt["disposition"]:
@@ -300,7 +297,7 @@ Source: %s
 MR: %s
 Type: %s
 Disposition: %s
-""" % (subject, source, bugz, type, disposition)
+""" % (subject, source, jira, type, disposition)
 
     body = '\n'.join(body) + '\n'
 

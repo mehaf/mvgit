@@ -51,7 +51,7 @@ SCRIPT_PYTHON += git-rebase-limb.py
 SCRIPT_PYTHON += git-signoff-limb.py
 SCRIPT_PYTHON += git-cherry-pick-mv.py
 SCRIPT_PYTHON += git-signoff-mv.py
-SCRIPT_PYTHON += git-commit-mv.py
+SCRIPT_PYTHON += git-commit-mg.py
 
 SCRIPTS = $(patsubst %.sh,%,$(SCRIPT_SH)) \
 	  $(patsubst %.py,%,$(SCRIPT_PYTHON))
