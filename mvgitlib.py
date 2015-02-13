@@ -1033,8 +1033,8 @@ class Commit(object):
     '''
 
     mv_header_fields = {
+	'MG-Jira:'		: re.compile(r'(\w+-)?\d+(, *((\w+-)?\d+))*$'),
 	'Source:'		: re.compile(r'.'),
-	'MR:'		: re.compile(r'(\w+-)?\d+(, *((\w+-)?\d+))*$'),
 	'Type:'		: re.compile(r'''
 				    (Defect\ Fix $) |
 				    (Security\ Fix $) |
@@ -1052,10 +1052,11 @@ class Commit(object):
 				    (MontaVista $)
 				''', re.X),
 	'ChangeID:'	: re.compile(r'[0-9a-f]{40}$'),
+	'Signed-off-by:'	: re.compile(r'.*\S+@\S+\.\S+'),
     }
 
     re_through_last_whitespace = re.compile(r'.*\s')
-    mv_terminator_prefix = 'Description:'
+    mv_terminator_prefix = 'MG-Jira:'
     commit_dict = {}
 
 
@@ -1102,11 +1103,11 @@ class Commit(object):
 	bad_line_count = 0
 	lines = []
 
-	for line in self.body:
+	for line in self.body[::-1]:
 	    l = line.strip()
 
-	    if not l or l.startswith(self.mv_terminator_prefix):
-		break
+	    if not l:
+		continue
 
 	    key = l.split(None, 1)[0]
 	    if key not in self.mv_header_fields:
@@ -1119,8 +1120,8 @@ class Commit(object):
 
 	    lines.append(line)
 
-	if len(lines) < 2 or bad_line_count > 2:
-	    lines = []
+	    if l.startswith(self.mv_terminator_prefix):
+		break
 
 	return lines
 
@@ -1133,7 +1134,16 @@ class Commit(object):
 	errors = []
 	dict = {}
 
-	for line in self.mv_header_lines:
+	subject = self.subject[0]
+	fields = subject.split(':', 1)
+	if len(fields) < 2:
+	    errors.append('subject line should start with <component>:\n(%s)\n' % subject)
+	elif fields[0] == 'component':
+	    errors.append('specific component needs to be provided\n(%s)\n' % subject)
+	elif 'One line summary' in fields[1]:
+	    errors.append('summary needs to be modified\n(%s)\n' % subject)
+
+	for line in self.mv_header_lines[1:]:
 	    if line.startswith(' ') or line.startswith('\t'):
 		errors.append('leading whitespace: "%s"\n' % line)
 		line = line.lstrip()
@@ -1144,13 +1154,13 @@ class Commit(object):
 
 	    fields = line.split(None, 1)
 	    if len(fields) < 2:
-		errors.append('MV header line %s has no value\n' % line)
+		errors.append('header line %s has no value\n' % line)
 		continue
 
 	    (key, value) = fields
 
 	    if key not in self.mv_header_fields:
-		errors.append('Bad MV header line: %s\n' % line)
+		errors.append('Bad header line: %s\n' % line)
 		continue
 
 	    if self.mv_header_fields[key].match(value):
@@ -1161,18 +1171,21 @@ class Commit(object):
 		    dict[lkey] = value
 		    if (lkey == 'source' and 'URL | Some Guy' in value or
 			    lkey == 'disposition' and
-				'Submitted to | Needs submi' in value):
-			errors.append('Bad MV header value: "%s"\n' % line)
+				'Submitted to | Needs submi' in value or
+			    lkey == 'mg-jira' and 'Jira ID' in value):
+			errors.append('Bad field value: "%s"\n' % line)
 	    else:
-		errors.append('Bad MV header value: "%s"\n' % line)
+		errors.append('Bad field value: "%s"\n' % line)
 
 	if not errors:
 	    for key in self.mv_header_fields.keys():
 		lkey = key.lower().rstrip(':')
 		if lkey == 'changeid' and not mvl6_kernel_repo():
 		    continue
+		if lkey != 'mg-jira':
+		    continue
 		if lkey not in dict:
-		    errors.append('missing "%s" MV header line\n' % key)
+		    errors.append('missing "%s" - required field\n' % key)
 
 	return errors
 
@@ -1210,10 +1223,10 @@ class Commit(object):
     @cached_property
     def bugz(self):
 	'''
-	Returns the last bugz number contained in the MV header's MR: field
+	Returns the last ID contained in the header's MG-Jira: field
 	'''
 
-	mr_list = self.mv_header_dict.get('mr')
+	mr_list = self.mv_header_dict.get('mg-jira')
 	if not mr_list:
 	    return None
 

@@ -127,6 +127,7 @@ $(patsubst %.sh,%,$(SCRIPT_SH)) : % : %.sh
 	    -e 's/@@MVGIT_VERSION@@/$(MVGIT_VERSION)/g' \
 	    $@.sh >$@+ && \
 	chmod +x $@+ && \
+	chmod -w $@+ && \
 	mv $@+ $@
 
 $(patsubst %.py,%,$(SCRIPT_PYTHON)) : % : %.py
@@ -135,6 +136,7 @@ $(patsubst %.py,%,$(SCRIPT_PYTHON)) : % : %.py
 	    -e 's/@@MVGIT_VERSION@@/$(MVGIT_VERSION)/g' \
 	    $@.py >$@+ && \
 	chmod +x $@+ && \
+	chmod -w $@+ && \
 	mv $@+ $@
 
 # These can record MVGIT_VERSION

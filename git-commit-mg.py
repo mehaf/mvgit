@@ -17,7 +17,7 @@ Usage: git-commit-mg [[-c|-C] <commit> [-x]] [--jira <jira-id>] [--type <string>
 		message.
 
 	--jira <bugno>, --mr <bugno>
-		Fill in the "MR:" field of the commit header with
+		Fill in the "MG-Jira:" field of the commit header with
 		<bugno>.
 
 	--source <string>
@@ -239,13 +239,9 @@ def commit_message():
     message_commit = opt["message-commit"]
     addsignoff = opt["addsignoff"]
 
-    subject = ("Oneline summary of change, less then 60 characters\n"
-		"# *** Leave above line blank for clean log formatting ***")
-    source = "Mentor Graphics Corporation | URL | Some Guy <email@addr>"
+    subject = ("component: One line summary, 60 characters or less\n"
+		"# *** Leave below line blank for clean log formatting ***")
     jira = "Jira ID"
-    type = "Defect Fix | Security Fix | Enhancement | Integration"
-    disposition = ("Submitted to | Needs submitting to | Merged from |"
-		    " Accepted by | Rejected by | Backport from | Local")
     changeid = None
     body = []
 
@@ -258,8 +254,8 @@ def commit_message():
 	if opt['add-picked-message']:
 	    body.append("(cherry picked from commit %s)" % message_commit.id)
 
-	if 'mr' in mv_header_dict:
-	    jira = mv_header_dict['mr']
+	if 'jira' in mv_header_dict:
+	    jira = mv_header_dict['jira']
 	if 'source' in mv_header_dict:
 	    source = mv_header_dict['source']
 	if 'type' in mv_header_dict:
@@ -293,11 +289,10 @@ def commit_message():
 
     header = """%s
 
-Source: %s
-MR: %s
-Type: %s
-Disposition: %s
-""" % (subject, source, jira, type, disposition)
+< description >
+
+MG-Jira: %s
+""" % (subject, jira)
 
     body = '\n'.join(body) + '\n'
 
@@ -311,9 +306,6 @@ Disposition: %s
 
     if changeid:
 	header += "ChangeID: %s\n" % changeid
-
-    if not body.startswith("Description:\n"):
-	header += "Description:\n\n"
 
     return header + body
 
